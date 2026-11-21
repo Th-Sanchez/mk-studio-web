@@ -1,7 +1,32 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-serif: "Bodoni Moda", Georgia, "Times New Roman", serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --color-mk-gold: #dda422;
+  --color-mk-gold-hover: #c9921b;
+  --color-mk-gold-text: #9a6f0c;
+  --color-mk-alabaster: #faf8f4;
+  --color-mk-hairline: #e7e2d8;
+  --color-mk-obsidian: #000000;
+  --color-mk-charcoal: #0e0e10;
+  --color-mk-elevated: #17171a;
+  --color-mk-ivory: #f7f4ee;
+  --color-mk-stone: #5c5850;
+  --color-mk-stone-dark: #a39e93;
+}
+
 @layer base {
-  body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  html {
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  .font-editorial {
+    font-family: var(--font-serif);
   }
 }

@@ -14,17 +14,17 @@ export function YesNoDetailField({
   detailPlaceholder = 'Se desejar, descreva rapidamente (opcional)',
 }: YesNoDetailFieldProps) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3.5">
+    <div className="rounded-[4px] border border-mk-hairline bg-white p-3.5 transition dark:border-white/12 dark:bg-mk-elevated">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <span className="text-sm font-medium text-slate-800">{label}</span>
+        <span className="text-sm font-medium text-black dark:text-mk-ivory">{label}</span>
         <div className="grid shrink-0 grid-cols-2 gap-2 sm:w-36">
           <button
             type="button"
             onClick={() => onChange({ answer: true, details: value.details })}
-            className={`min-h-[40px] rounded-lg border text-sm font-semibold transition ${
+            className={`min-h-[42px] rounded-[4px] border text-xs font-bold uppercase tracking-wider transition ${
               value.answer
-                ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
-                : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                ? 'border-mk-gold bg-mk-gold text-black shadow-2xs'
+                : 'border-mk-hairline bg-white text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:bg-mk-charcoal dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory'
             }`}
           >
             Sim
@@ -32,10 +32,10 @@ export function YesNoDetailField({
           <button
             type="button"
             onClick={() => onChange({ answer: false, details: null })}
-            className={`min-h-[40px] rounded-lg border text-sm font-semibold transition ${
+            className={`min-h-[42px] rounded-[4px] border text-xs font-bold uppercase tracking-wider transition ${
               !value.answer
-                ? 'border-slate-900 bg-slate-900 text-white shadow-xs'
-                : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                ? 'border-black bg-black text-white dark:border-mk-ivory dark:bg-mk-ivory dark:text-black'
+                : 'border-mk-hairline bg-white text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:bg-mk-charcoal dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory'
             }`}
           >
             Não
@@ -51,7 +51,7 @@ export function YesNoDetailField({
             onChange={(e) => onChange({ answer: true, details: e.target.value || null })}
             placeholder={detailPlaceholder}
             maxLength={500}
-            className="w-full rounded-lg border border-amber-300 bg-amber-50/40 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:bg-white focus:outline-none"
+            className="w-full rounded-[4px] border border-mk-gold/60 bg-[#FFFDF7] px-3 py-2 text-sm text-black placeholder:text-mk-stone/60 focus:border-mk-gold focus:bg-white focus:outline-none dark:border-mk-gold/50 dark:bg-mk-charcoal dark:text-mk-ivory dark:placeholder:text-mk-stone-dark/60"
           />
         </div>
       )}
@@ -73,18 +73,18 @@ export function YesNoBooleanField({
   highlightYes = false,
 }: YesNoBooleanFieldProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-3.5 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-sm font-medium text-slate-800">{label}</span>
+    <div className="flex flex-col gap-3 rounded-[4px] border border-mk-hairline bg-white p-3.5 sm:flex-row sm:items-center sm:justify-between dark:border-white/12 dark:bg-mk-elevated">
+      <span className="text-sm font-medium text-black dark:text-mk-ivory">{label}</span>
       <div className="grid shrink-0 grid-cols-2 gap-2 sm:w-36">
         <button
           type="button"
           onClick={() => onChange(true)}
-          className={`min-h-[40px] rounded-lg border text-sm font-semibold transition ${
+          className={`min-h-[42px] rounded-[4px] border text-xs font-bold uppercase tracking-wider transition ${
             value
               ? highlightYes
-                ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
-                : 'border-slate-900 bg-slate-900 text-white shadow-xs'
-              : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                ? 'border-mk-gold bg-mk-gold text-black shadow-2xs'
+                : 'border-black bg-black text-white dark:border-mk-gold dark:bg-mk-gold dark:text-black'
+              : 'border-mk-hairline bg-white text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:bg-mk-charcoal dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory'
           }`}
         >
           Sim
@@ -92,10 +92,10 @@ export function YesNoBooleanField({
         <button
           type="button"
           onClick={() => onChange(false)}
-          className={`min-h-[40px] rounded-lg border text-sm font-semibold transition ${
+          className={`min-h-[42px] rounded-[4px] border text-xs font-bold uppercase tracking-wider transition ${
             !value
-              ? 'border-slate-900 bg-slate-900 text-white shadow-xs'
-              : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+              ? 'border-black bg-black text-white dark:border-mk-ivory dark:bg-mk-ivory dark:text-black'
+              : 'border-mk-hairline bg-white text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:bg-mk-charcoal dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory'
           }`}
         >
           Não

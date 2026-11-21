@@ -171,6 +171,7 @@ export interface StudentListItem {
   intendedWeeklyFrequency: number | null
   hasHealthAlerts: boolean
   healthAlertsCount: number
+  healthAlerts: string[]
   status: StudentStatus
   createdAt: string
 }

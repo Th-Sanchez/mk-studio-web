@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { StatusBadge } from '../components/StatusBadge'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { ApiError } from '../services/api'
 import { logoutAdmin } from '../services/authService'
 import {
@@ -47,27 +48,37 @@ import {
 
 type DetailTab = 'assessment' | 'medical' | 'activity' | 'personal' | 'consent'
 
+const INPUT_CLASS =
+  'w-full rounded-[4px] border border-mk-hairline bg-white px-3 py-2 text-sm text-black focus:border-black focus:outline-none dark:border-white/15 dark:bg-mk-elevated dark:text-mk-ivory dark:focus:border-mk-gold'
+
+const LABEL_CLASS =
+  'mb-1 block text-[11px] font-bold uppercase tracking-[0.12em] text-mk-stone dark:text-mk-stone-dark'
+
 function AnswerRow({ label, item }: { label: string; item: YesNoDetail }) {
   return (
     <div
-      className={`rounded-xl border p-3 text-sm ${
+      className={`rounded-[4px] border p-3 text-sm ${
         item.answer
-          ? 'border-amber-200 bg-amber-50/70 text-amber-950'
-          : 'border-slate-200 bg-white text-slate-700'
+          ? 'border-amber-300 bg-[#FFFBEB] text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/35 dark:text-amber-100'
+          : 'border-mk-hairline bg-white text-black dark:border-white/10 dark:bg-mk-elevated dark:text-mk-ivory'
       }`}
     >
       <div className="flex items-center justify-between gap-2">
         <span>{label}</span>
         <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold ${
-            item.answer ? 'bg-amber-600 text-white' : 'bg-slate-100 text-slate-600'
+          className={`shrink-0 rounded-[3px] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+            item.answer
+              ? 'bg-mk-gold text-black'
+              : 'bg-mk-alabaster text-mk-stone dark:bg-white/10 dark:text-mk-stone-dark'
           }`}
         >
           {item.answer ? 'Sim' : 'Não'}
         </span>
       </div>
       {item.answer && item.details && (
-        <p className="mt-1.5 text-xs font-medium text-amber-900">Detalhe: {item.details}</p>
+        <p className="mt-1.5 text-xs font-medium text-amber-900 dark:text-amber-200">
+          Detalhe: {item.details}
+        </p>
       )}
     </div>
   )
@@ -75,11 +86,13 @@ function AnswerRow({ label, item }: { label: string; item: YesNoDetail }) {
 
 function BoolRow({ label, value }: { label: string; value: boolean }) {
   return (
-    <div className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
+    <div className="flex items-center justify-between gap-2 rounded-[4px] border border-mk-hairline bg-white p-3 text-sm text-black dark:border-white/10 dark:bg-mk-elevated dark:text-mk-ivory">
       <span>{label}</span>
       <span
-        className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold ${
-          value ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'
+        className={`shrink-0 rounded-[3px] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+          value
+            ? 'bg-black text-white dark:bg-mk-gold dark:text-black'
+            : 'bg-mk-alabaster text-mk-stone dark:bg-white/10 dark:text-mk-stone-dark'
         }`}
       >
         {value ? 'Sim' : 'Não'}
@@ -247,8 +260,8 @@ export function StudentDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 text-slate-500">
-        <Loader2 className="h-6 w-6 animate-spin" />
+      <div className="flex min-h-screen flex-col items-center justify-center bg-mk-alabaster text-mk-stone dark:bg-black dark:text-mk-stone-dark">
+        <Loader2 className="h-6 w-6 animate-spin text-mk-gold" />
         <p className="mt-2 text-sm">Carregando ficha...</p>
       </div>
     )
@@ -256,11 +269,13 @@ export function StudentDetailPage() {
 
   if (!student) {
     return (
-      <div className="min-h-screen bg-slate-50 px-4 py-12 text-center">
-        <p className="text-sm text-rose-700">{error || 'Aluno não encontrado.'}</p>
+      <div className="min-h-screen bg-mk-alabaster px-4 py-12 text-center dark:bg-black">
+        <p className="text-sm text-rose-700 dark:text-rose-300">
+          {error || 'Aluno não encontrado.'}
+        </p>
         <Link
           to="/alunos"
-          className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-[4px] bg-mk-gold px-4 py-2 text-xs font-bold uppercase tracking-wider text-black"
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar para lista
@@ -276,68 +291,78 @@ export function StudentDetailPage() {
       : null
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-14">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white">
+    <div className="min-h-screen bg-mk-alabaster pb-14 transition-colors dark:bg-black">
+      <header className="sticky top-0 z-20 border-b border-mk-hairline bg-white/95 backdrop-blur dark:border-white/12 dark:bg-black/95">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3.5">
           <Link
             to="/alunos"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 hover:text-slate-900"
+            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-black hover:text-mk-gold-text dark:text-mk-ivory dark:hover:text-mk-gold"
           >
             <ArrowLeft className="h-4 w-4" />
             Alunos
           </Link>
 
-          <a
-            href={buildWhatsAppUrl(
-              student.phone,
-              `Olá ${student.fullName.split(' ')[0]}, tudo bem? Aqui é do MK STUDIO!`,
-            )}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700 sm:text-sm"
-          >
-            <MessageCircle className="h-4 w-4" />
-            Chamar no WhatsApp
-          </a>
+          <div className="flex items-center gap-2">
+            <a
+              href={buildWhatsAppUrl(
+                student.phone,
+                `Olá ${student.fullName.split(' ')[0]}, tudo bem? Aqui é do MK STUDIO!`,
+              )}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-9 items-center gap-1.5 rounded-[4px] bg-emerald-600 px-3 text-xs font-bold uppercase tracking-[0.1em] text-white transition hover:bg-emerald-700 sm:px-3.5"
+            >
+              <MessageCircle className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Chamar no WhatsApp</span>
+              <span className="sm:hidden">WhatsApp</span>
+            </a>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-4xl space-y-5 px-4 pt-6">
         {feedback && (
-          <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-sm font-medium text-emerald-800">
+          <div className="flex items-center gap-2 rounded-[4px] border border-emerald-300 bg-emerald-50 p-3.5 text-sm font-medium text-emerald-900 dark:border-emerald-700/60 dark:bg-emerald-950/50 dark:text-emerald-200">
             <CheckCircle2 className="h-4 w-4 shrink-0" />
             <span>{feedback}</span>
           </div>
         )}
 
         {error && (
-          <div className="rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-sm text-rose-700">
+          <div className="rounded-[4px] border border-rose-300 bg-rose-50 p-3.5 text-sm text-rose-800 dark:border-rose-800/60 dark:bg-rose-950/50 dark:text-rose-200">
             {error}
           </div>
         )}
 
         {/* Student Header Card */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
+        <section className="rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="text-xl font-bold text-slate-900">{student.fullName}</h1>
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-mk-gold-text dark:text-mk-gold">
+                Dossiê do Aluno • Cadastro em {formatDateBR(student.createdAt)}
+              </p>
+              <div className="mt-1.5 flex flex-wrap items-center gap-2.5">
+                <h1 className="font-serif text-2xl font-semibold text-black sm:text-3xl dark:text-mk-ivory">
+                  {student.fullName}
+                </h1>
                 <StatusBadge status={student.status} />
               </div>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1.5 text-sm text-mk-stone dark:text-mk-stone-dark">
                 {student.age} anos ({formatDateBR(student.birthDate)}) •{' '}
                 {GENDER_LABELS[student.gender]} • {formatPhone(student.phone)}
               </p>
               {anamnesis && (
-                <p className="mt-2 text-xs font-medium text-slate-600">
-                  Objetivo:{' '}
-                  <strong>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <span className="rounded-[3px] bg-mk-alabaster px-2.5 py-1 text-xs font-semibold text-black dark:bg-white/10 dark:text-mk-ivory">
                     {anamnesis.primaryGoal === 'OTHER' && anamnesis.primaryGoalOther
                       ? anamnesis.primaryGoalOther
                       : PRIMARY_GOAL_LABELS[anamnesis.primaryGoal]}
-                  </strong>{' '}
-                  • Frequência pretendida: <strong>{anamnesis.intendedWeeklyFrequency}x/sem</strong>
-                </p>
+                  </span>
+                  <span className="rounded-[3px] bg-mk-alabaster px-2.5 py-1 text-xs font-semibold text-black dark:bg-white/10 dark:text-mk-ivory">
+                    {anamnesis.intendedWeeklyFrequency}x/semana
+                  </span>
+                </div>
               )}
             </div>
 
@@ -348,10 +373,10 @@ export function StudentDetailPage() {
                   type="button"
                   disabled={updatingStatus}
                   onClick={() => handleStatusChange(s)}
-                  className={`rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
+                  className={`rounded-[4px] border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition ${
                     student.status === s
-                      ? 'border-slate-900 bg-slate-900 text-white'
-                      : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-100'
+                      ? 'border-black bg-black text-white dark:border-mk-gold dark:bg-mk-gold dark:text-black'
+                      : 'border-mk-hairline bg-white text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:bg-mk-elevated dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory'
                   }`}
                 >
                   {STATUS_LABELS[s]}
@@ -363,14 +388,14 @@ export function StudentDetailPage() {
 
         {/* Health Alerts Banner */}
         {anamnesis && anamnesis.healthAlerts.length > 0 && (
-          <section className="rounded-2xl border border-amber-300 bg-amber-50 p-4 sm:p-5">
-            <div className="flex items-center gap-2 text-amber-900">
-              <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600" />
-              <h2 className="text-sm font-bold uppercase tracking-wider">
+          <section className="rounded-[4px] border border-amber-300 border-l-4 border-l-mk-gold bg-[#FFFDF5] p-4 sm:p-5 dark:border-amber-700/60 dark:border-l-mk-gold dark:bg-amber-950/35">
+            <div className="flex items-center gap-2 text-amber-900 dark:text-amber-300">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-mk-gold" />
+              <h2 className="font-sans text-xs font-bold uppercase tracking-[0.16em]">
                 Alertas de Saúde e Lesões ({anamnesis.healthAlerts.length})
               </h2>
             </div>
-            <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm font-medium text-amber-950">
+            <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm font-medium text-amber-950 dark:text-amber-100">
               {anamnesis.healthAlerts.map((alert, idx) => (
                 <li key={idx}>{alert}</li>
               ))}
@@ -378,7 +403,7 @@ export function StudentDetailPage() {
           </section>
         )}
 
-        {/* Navigation Tabs */}
+        {/* Editorial Horizontal Tabs */}
         <div className="flex gap-2 overflow-x-auto pb-1">
           {(
             [
@@ -393,10 +418,10 @@ export function StudentDetailPage() {
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`shrink-0 rounded-xl border px-3.5 py-2 text-xs font-semibold transition sm:text-sm ${
+              className={`shrink-0 rounded-[4px] border px-3.5 py-2 text-xs font-bold uppercase tracking-[0.1em] transition ${
                 activeTab === tab.id
-                  ? 'border-slate-900 bg-slate-900 text-white'
-                  : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-100'
+                  ? 'border-black bg-black text-white dark:border-mk-gold dark:bg-mk-gold dark:text-black'
+                  : 'border-mk-hairline bg-white text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:bg-mk-charcoal dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory'
               }`}
             >
               {tab.label}
@@ -404,23 +429,23 @@ export function StudentDetailPage() {
           ))}
         </div>
 
-        {/* TAB 1: AVALIAÇÃO FÍSICA & OBSERVAÇÕES DO PROFISSIONAL */}
+        {/* TAB 1: AVALIAÇÃO FÍSICA & OBSERVAÇÕES */}
         {activeTab === 'assessment' && anamnesis && (
           <form
             onSubmit={handleSaveAssessment}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs"
+            className="rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal"
           >
-            <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-mk-hairline pb-4 dark:border-white/10">
               <div>
-                <h2 className="text-base font-bold text-slate-900">
+                <h2 className="font-serif text-xl font-semibold text-black dark:text-mk-ivory">
                   6. Informações Físicas e Avaliação
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="mt-0.5 text-xs text-mk-stone dark:text-mk-stone-dark">
                   Complemente ou atualize as medidas e observações profissionais deste aluno.
                 </p>
               </div>
               {bmi && (
-                <span className="rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-800">
+                <span className="rounded-[4px] border border-mk-gold/60 bg-[#FFF8E7] px-3 py-1.5 text-xs font-bold text-mk-gold-text dark:bg-mk-gold/15 dark:text-mk-gold">
                   IMC estimado: {bmi}
                 </span>
               )}
@@ -428,9 +453,7 @@ export function StudentDetailPage() {
 
             <div className="mt-5 grid gap-4 sm:grid-cols-3">
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">
-                  Peso atual (kg)
-                </label>
+                <label className={LABEL_CLASS}>Peso atual (kg)</label>
                 <input
                   type="number"
                   step="0.1"
@@ -441,11 +464,11 @@ export function StudentDetailPage() {
                       weightKg: parseOptionalNumber(e.target.value),
                     }))
                   }
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+                  className={INPUT_CLASS}
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">Altura (cm)</label>
+                <label className={LABEL_CLASS}>Altura (cm)</label>
                 <input
                   type="number"
                   step="0.5"
@@ -456,13 +479,11 @@ export function StudentDetailPage() {
                       heightCm: parseOptionalNumber(e.target.value),
                     }))
                   }
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+                  className={INPUT_CLASS}
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">
-                  % Gordura corporal
-                </label>
+                <label className={LABEL_CLASS}>% Gordura corporal</label>
                 <input
                   type="number"
                   step="0.1"
@@ -473,13 +494,11 @@ export function StudentDetailPage() {
                       bodyFatPercentage: parseOptionalNumber(e.target.value),
                     }))
                   }
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+                  className={INPUT_CLASS}
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">
-                  Massa muscular (kg)
-                </label>
+                <label className={LABEL_CLASS}>Massa muscular (kg)</label>
                 <input
                   type="number"
                   step="0.1"
@@ -490,13 +509,11 @@ export function StudentDetailPage() {
                       muscleMassKg: parseOptionalNumber(e.target.value),
                     }))
                   }
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+                  className={INPUT_CLASS}
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">
-                  Pressão arterial
-                </label>
+                <label className={LABEL_CLASS}>Pressão arterial</label>
                 <input
                   type="text"
                   value={assessmentForm.bloodPressure ?? ''}
@@ -507,13 +524,11 @@ export function StudentDetailPage() {
                     }))
                   }
                   placeholder="120/80"
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+                  className={INPUT_CLASS}
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">
-                  FC em repouso (bpm)
-                </label>
+                <label className={LABEL_CLASS}>FC em repouso (bpm)</label>
                 <input
                   type="number"
                   value={assessmentForm.restingHeartRate ?? ''}
@@ -523,15 +538,13 @@ export function StudentDetailPage() {
                       restingHeartRate: parseOptionalNumber(e.target.value),
                     }))
                   }
-                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+                  className={INPUT_CLASS}
                 />
               </div>
             </div>
 
-            <div className="mt-4">
-              <label className="mb-1.5 block text-sm font-semibold text-slate-800">
-                Observações do profissional responsável
-              </label>
+            <div className="mt-5">
+              <label className={LABEL_CLASS}>Observações do profissional responsável</label>
               <textarea
                 rows={4}
                 value={assessmentForm.professionalNotes ?? ''}
@@ -542,15 +555,15 @@ export function StudentDetailPage() {
                   }))
                 }
                 placeholder="Anote restrições de exercícios, postura, preferências de horário ou plano inicial..."
-                className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                className={INPUT_CLASS}
               />
             </div>
 
-            <div className="mt-4 flex justify-end">
+            <div className="mt-5 flex justify-end">
               <button
                 type="submit"
                 disabled={savingAssessment}
-                className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-[4px] bg-mk-gold px-5 py-3 text-xs font-bold uppercase tracking-[0.14em] text-black transition hover:bg-mk-gold-hover disabled:opacity-60"
               >
                 {savingAssessment ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -565,9 +578,9 @@ export function StudentDetailPage() {
 
         {/* TAB 2: HISTÓRICO MÉDICO */}
         {activeTab === 'medical' && anamnesis && (
-          <div className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
+          <div className="space-y-5 rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal">
             <section className="space-y-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
                 Condições atuais
               </h3>
               <AnswerRow
@@ -616,8 +629,8 @@ export function StudentDetailPage() {
               />
             </section>
 
-            <section className="space-y-2 border-t border-slate-200 pt-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <section className="space-y-2 border-t border-mk-hairline pt-4 dark:border-white/10">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
                 Histórico de lesões
               </h3>
               <AnswerRow label="Fratura" item={anamnesis.medicalHistory.injuryHistory.fracture} />
@@ -655,8 +668,8 @@ export function StudentDetailPage() {
               />
             </section>
 
-            <section className="space-y-2 border-t border-slate-200 pt-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <section className="space-y-2 border-t border-mk-hairline pt-4 dark:border-white/10">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
                 Medicamentos e acompanhamento
               </h3>
               <BoolRow
@@ -664,7 +677,7 @@ export function StudentDetailPage() {
                 value={anamnesis.medicalHistory.medicationsAndCare.usesMedication}
               />
               {anamnesis.medicalHistory.medicationsAndCare.medicationsList && (
-                <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+                <div className="rounded-[4px] border border-amber-300 bg-[#FFFBEB] p-3 text-sm text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/35 dark:text-amber-100">
                   <strong>Medicamentos:</strong>{' '}
                   {anamnesis.medicalHistory.medicationsAndCare.medicationsList}
                 </div>
@@ -687,9 +700,9 @@ export function StudentDetailPage() {
               />
             </section>
 
-            <section className="space-y-2 border-t border-slate-200 pt-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Histórico familiar & Hábitos de vida
+            <section className="space-y-2 border-t border-mk-hairline pt-4 dark:border-white/10">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
+                Histórico familiar &amp; Hábitos de vida
               </h3>
               <BoolRow
                 label="Histórico familiar — Doenças cardíacas"
@@ -708,28 +721,28 @@ export function StudentDetailPage() {
                 item={anamnesis.medicalHistory.familyHistory.hereditaryDiseases}
               />
               {anamnesis.medicalHistory.familyHistory.otherRelevantHistory && (
-                <div className="rounded-xl border border-slate-200 p-3 text-sm text-slate-700">
+                <div className="rounded-[4px] border border-mk-hairline p-3 text-sm text-black dark:border-white/10 dark:text-mk-ivory">
                   <strong>Outro histórico familiar:</strong>{' '}
                   {anamnesis.medicalHistory.familyHistory.otherRelevantHistory}
                 </div>
               )}
               <div className="grid gap-2 pt-2 sm:grid-cols-3">
-                <div className="rounded-xl bg-slate-50 p-3 text-xs">
-                  <p className="text-slate-500">Qualidade do sono</p>
-                  <p className="mt-0.5 text-sm font-bold text-slate-900">
+                <div className="rounded-[4px] bg-mk-alabaster p-3 text-xs dark:bg-mk-elevated">
+                  <p className="text-mk-stone dark:text-mk-stone-dark">Qualidade do sono</p>
+                  <p className="mt-0.5 text-sm font-bold text-black dark:text-mk-ivory">
                     {SLEEP_QUALITY_LABELS[anamnesis.medicalHistory.lifestyleHabits.sleepQuality]} (
                     {anamnesis.medicalHistory.lifestyleHabits.sleepHoursPerNight}h/noite)
                   </p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3 text-xs">
-                  <p className="text-slate-500">Nível de estresse</p>
-                  <p className="mt-0.5 text-sm font-bold text-slate-900">
+                <div className="rounded-[4px] bg-mk-alabaster p-3 text-xs dark:bg-mk-elevated">
+                  <p className="text-mk-stone dark:text-mk-stone-dark">Nível de estresse</p>
+                  <p className="mt-0.5 text-sm font-bold text-black dark:text-mk-ivory">
                     {STRESS_LEVEL_LABELS[anamnesis.medicalHistory.lifestyleHabits.stressLevel]}
                   </p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3 text-xs">
-                  <p className="text-slate-500">Tabagismo / Álcool</p>
-                  <p className="mt-0.5 text-sm font-bold text-slate-900">
+                <div className="rounded-[4px] bg-mk-alabaster p-3 text-xs dark:bg-mk-elevated">
+                  <p className="text-mk-stone dark:text-mk-stone-dark">Tabagismo / Álcool</p>
+                  <p className="mt-0.5 text-sm font-bold text-black dark:text-mk-ivory">
                     Fuma: {anamnesis.medicalHistory.lifestyleHabits.smokes ? 'Sim' : 'Não'} • Álcool
                     freq.:{' '}
                     {anamnesis.medicalHistory.lifestyleHabits.frequentAlcoholConsumption
@@ -744,9 +757,9 @@ export function StudentDetailPage() {
 
         {/* TAB 3: ATIVIDADE FÍSICA & OBJETIVOS */}
         {activeTab === 'activity' && anamnesis && (
-          <div className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
+          <div className="space-y-5 rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal">
             <section className="space-y-2.5">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
                 4. Histórico de atividade física
               </h3>
               <BoolRow
@@ -754,7 +767,7 @@ export function StudentDetailPage() {
                 value={anamnesis.physicalActivityHistory.practicedWeightTraining}
               />
               {anamnesis.physicalActivityHistory.weightTrainingDuration && (
-                <p className="text-sm text-slate-700">
+                <p className="text-sm text-black dark:text-mk-ivory">
                   <strong>Tempo de prática:</strong>{' '}
                   {anamnesis.physicalActivityHistory.weightTrainingDuration}
                 </p>
@@ -764,13 +777,13 @@ export function StudentDetailPage() {
                 value={anamnesis.physicalActivityHistory.currentlyActive}
               />
               {anamnesis.physicalActivityHistory.currentlyActive ? (
-                <p className="text-sm text-slate-700">
+                <p className="text-sm text-black dark:text-mk-ivory">
                   <strong>Atividade atual:</strong>{' '}
                   {anamnesis.physicalActivityHistory.currentActivity || '—'} (
                   {anamnesis.physicalActivityHistory.currentWeeklyFrequency ?? '—'}x/semana)
                 </p>
               ) : (
-                <p className="text-sm text-slate-700">
+                <p className="text-sm text-black dark:text-mk-ivory">
                   <strong>Tempo sem treinar:</strong>{' '}
                   {anamnesis.physicalActivityHistory.timeInactive || 'Não informado'}
                 </p>
@@ -781,41 +794,49 @@ export function StudentDetailPage() {
               />
             </section>
 
-            <section className="space-y-2.5 border-t border-slate-200 pt-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <section className="space-y-2.5 border-t border-mk-hairline pt-4 dark:border-white/10">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
                 5. Objetivos e expectativas
               </h3>
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-xl bg-slate-50 p-3.5 text-sm">
-                  <p className="text-xs text-slate-500">Objetivo principal</p>
-                  <p className="mt-0.5 font-bold text-slate-900">
+                <div className="rounded-[4px] bg-mk-alabaster p-3.5 text-sm dark:bg-mk-elevated">
+                  <p className="text-xs text-mk-stone dark:text-mk-stone-dark">Objetivo principal</p>
+                  <p className="mt-0.5 font-bold text-black dark:text-mk-ivory">
                     {anamnesis.primaryGoal === 'OTHER' && anamnesis.primaryGoalOther
                       ? anamnesis.primaryGoalOther
                       : PRIMARY_GOAL_LABELS[anamnesis.primaryGoal]}
                   </p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3.5 text-sm">
-                  <p className="text-xs text-slate-500">Objetivo secundário</p>
-                  <p className="mt-0.5 font-semibold text-slate-900">
+                <div className="rounded-[4px] bg-mk-alabaster p-3.5 text-sm dark:bg-mk-elevated">
+                  <p className="text-xs text-mk-stone dark:text-mk-stone-dark">
+                    Objetivo secundário
+                  </p>
+                  <p className="mt-0.5 font-semibold text-black dark:text-mk-ivory">
                     {anamnesis.secondaryGoal || '—'}
                   </p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3.5 text-sm">
-                  <p className="text-xs text-slate-500">Região de maior atenção</p>
-                  <p className="mt-0.5 font-semibold text-slate-900">
+                <div className="rounded-[4px] bg-mk-alabaster p-3.5 text-sm dark:bg-mk-elevated">
+                  <p className="text-xs text-mk-stone dark:text-mk-stone-dark">
+                    Região de maior atenção
+                  </p>
+                  <p className="mt-0.5 font-semibold text-black dark:text-mk-ivory">
                     {anamnesis.focusBodyArea || '—'}
                   </p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3.5 text-sm">
-                  <p className="text-xs text-slate-500">Frequência pretendida</p>
-                  <p className="mt-0.5 font-bold text-slate-900">
+                <div className="rounded-[4px] bg-mk-alabaster p-3.5 text-sm dark:bg-mk-elevated">
+                  <p className="text-xs text-mk-stone dark:text-mk-stone-dark">
+                    Frequência pretendida
+                  </p>
+                  <p className="mt-0.5 font-bold text-black dark:text-mk-ivory">
                     {anamnesis.intendedWeeklyFrequency}x por semana
                   </p>
                 </div>
               </div>
-              <div className="rounded-xl bg-slate-50 p-3.5 text-sm">
-                <p className="text-xs text-slate-500">Disponibilidade semanal</p>
-                <p className="mt-0.5 font-semibold text-slate-900">
+              <div className="rounded-[4px] bg-mk-alabaster p-3.5 text-sm dark:bg-mk-elevated">
+                <p className="text-xs text-mk-stone dark:text-mk-stone-dark">
+                  Disponibilidade semanal
+                </p>
+                <p className="mt-0.5 font-semibold text-black dark:text-mk-ivory">
                   {anamnesis.weeklyAvailability}
                 </p>
               </div>
@@ -825,15 +846,15 @@ export function StudentDetailPage() {
 
         {/* TAB 4: DADOS PESSOAIS, ENDEREÇO & CONTATO DE EMERGÊNCIA */}
         {activeTab === 'personal' && studentForm && (
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
-            <div className="flex items-center justify-between gap-2">
-              <h2 className="text-base font-bold text-slate-900">
+          <div className="rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal">
+            <div className="flex items-center justify-between gap-2 border-b border-mk-hairline pb-4 dark:border-white/10">
+              <h2 className="font-serif text-xl font-semibold text-black dark:text-mk-ivory">
                 Dados Pessoais, Endereço e Emergência
               </h2>
               <button
                 type="button"
                 onClick={() => setEditingStudent((prev) => !prev)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 rounded-[4px] border border-mk-hairline px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-black hover:border-black dark:border-white/15 dark:text-mk-ivory dark:hover:border-mk-gold"
               >
                 {editingStudent ? (
                   <>
@@ -853,9 +874,7 @@ export function StudentDetailPage() {
               <form onSubmit={handleSaveStudent} className="mt-4 space-y-4">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-slate-600">
-                      Nome completo
-                    </label>
+                    <label className={LABEL_CLASS}>Nome completo</label>
                     <input
                       type="text"
                       required
@@ -863,13 +882,11 @@ export function StudentDetailPage() {
                       onChange={(e) =>
                         setStudentForm((prev) => prev && { ...prev, fullName: e.target.value })
                       }
-                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                      className={INPUT_CLASS}
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-slate-600">
-                      WhatsApp
-                    </label>
+                    <label className={LABEL_CLASS}>WhatsApp</label>
                     <input
                       type="tel"
                       required
@@ -879,13 +896,11 @@ export function StudentDetailPage() {
                           (prev) => prev && { ...prev, phone: formatPhone(e.target.value) },
                         )
                       }
-                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                      className={INPUT_CLASS}
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-slate-600">
-                      Data de nascimento
-                    </label>
+                    <label className={LABEL_CLASS}>Data de nascimento</label>
                     <input
                       type="date"
                       required
@@ -893,11 +908,11 @@ export function StudentDetailPage() {
                       onChange={(e) =>
                         setStudentForm((prev) => prev && { ...prev, birthDate: e.target.value })
                       }
-                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                      className={INPUT_CLASS}
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-slate-600">Sexo</label>
+                    <label className={LABEL_CLASS}>Sexo</label>
                     <select
                       value={studentForm.gender}
                       onChange={(e) =>
@@ -905,7 +920,7 @@ export function StudentDetailPage() {
                           (prev) => prev && { ...prev, gender: e.target.value as Gender },
                         )
                       }
-                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
+                      className={INPUT_CLASS}
                     >
                       {(Object.keys(GENDER_LABELS) as Gender[]).map((g) => (
                         <option key={g} value={g}>
@@ -916,11 +931,9 @@ export function StudentDetailPage() {
                   </div>
                 </div>
 
-                <div className="grid gap-3 border-t border-slate-200 pt-3 sm:grid-cols-3">
+                <div className="grid gap-3 border-t border-mk-hairline pt-4 sm:grid-cols-3 dark:border-white/10">
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-slate-600">
-                      Contato de emergência
-                    </label>
+                    <label className={LABEL_CLASS}>Contato de emergência</label>
                     <input
                       type="text"
                       required
@@ -937,13 +950,11 @@ export function StudentDetailPage() {
                             },
                         )
                       }
-                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                      className={INPUT_CLASS}
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-slate-600">
-                      Parentesco
-                    </label>
+                    <label className={LABEL_CLASS}>Parentesco</label>
                     <input
                       type="text"
                       required
@@ -960,13 +971,11 @@ export function StudentDetailPage() {
                             },
                         )
                       }
-                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                      className={INPUT_CLASS}
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-slate-600">
-                      Telefone emergência
-                    </label>
+                    <label className={LABEL_CLASS}>Telefone emergência</label>
                     <input
                       type="tel"
                       required
@@ -983,7 +992,7 @@ export function StudentDetailPage() {
                             },
                         )
                       }
-                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                      className={INPUT_CLASS}
                     />
                   </div>
                 </div>
@@ -992,7 +1001,7 @@ export function StudentDetailPage() {
                   <button
                     type="submit"
                     disabled={savingStudent}
-                    className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-[4px] bg-mk-gold px-5 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-black hover:bg-mk-gold-hover disabled:opacity-60"
                   >
                     {savingStudent ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -1004,47 +1013,47 @@ export function StudentDetailPage() {
                 </div>
               </form>
             ) : (
-              <div className="mt-4 space-y-4 text-sm text-slate-700">
+              <div className="mt-4 space-y-4 text-sm text-black dark:text-mk-ivory">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
-                    <p className="text-xs text-slate-500">E-mail</p>
-                    <p className="font-medium text-slate-900">{student.email || 'Não informado'}</p>
+                    <p className="text-xs text-mk-stone dark:text-mk-stone-dark">E-mail</p>
+                    <p className="font-medium">{student.email || 'Não informado'}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">WhatsApp</p>
-                    <p className="font-medium text-slate-900">{formatPhone(student.phone)}</p>
+                    <p className="text-xs text-mk-stone dark:text-mk-stone-dark">WhatsApp</p>
+                    <p className="font-medium">{formatPhone(student.phone)}</p>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-200 pt-3">
-                  <p className="text-xs text-slate-500">Endereço</p>
-                  <p className="mt-0.5 font-medium text-slate-900">
+                <div className="border-t border-mk-hairline pt-3 dark:border-white/10">
+                  <p className="text-xs text-mk-stone dark:text-mk-stone-dark">Endereço</p>
+                  <p className="mt-0.5 font-medium">
                     {student.address.street}, {student.address.number}
                     {student.address.complement ? ` — ${student.address.complement}` : ''}
                   </p>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-mk-stone dark:text-mk-stone-dark">
                     {student.address.neighborhood} • {student.address.city}/{student.address.state}{' '}
                     • CEP {formatZipCode(student.address.zipCode)}
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-rose-200 bg-rose-50/60 p-3.5">
-                  <p className="text-xs font-bold uppercase tracking-wider text-rose-800">
+                <div className="rounded-[4px] border border-rose-300 bg-rose-50/70 p-3.5 dark:border-rose-800/60 dark:bg-rose-950/35">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-rose-800 dark:text-rose-300">
                     Contato de Emergência
                   </p>
                   <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <p className="font-bold text-slate-900">
+                      <p className="font-bold text-black dark:text-mk-ivory">
                         {student.emergencyContact.fullName} ({student.emergencyContact.relationship}
                         )
                       </p>
-                      <p className="text-xs text-slate-600">
+                      <p className="text-xs text-mk-stone dark:text-mk-stone-dark">
                         {formatPhone(student.emergencyContact.phone)}
                       </p>
                     </div>
                     <a
                       href={`tel:${student.emergencyContact.phone}`}
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
+                      className="inline-flex items-center gap-1.5 rounded-[4px] bg-rose-600 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-rose-700"
                     >
                       <Phone className="h-3.5 w-3.5" />
                       Ligar
@@ -1052,12 +1061,12 @@ export function StudentDetailPage() {
                   </div>
                 </div>
 
-                <div className="border-t border-slate-200 pt-4">
+                <div className="border-t border-mk-hairline pt-4 dark:border-white/10">
                   <button
                     type="button"
                     disabled={deleting}
                     onClick={handleDelete}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-white px-3.5 py-2 text-xs font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60"
+                    className="inline-flex items-center gap-1.5 rounded-[4px] border border-rose-300 bg-white px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-rose-700 hover:bg-rose-50 disabled:opacity-60 dark:border-rose-800/60 dark:bg-transparent dark:text-rose-300 dark:hover:bg-rose-950/40"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                     {deleting ? 'Excluindo...' : 'Excluir cadastro do aluno'}
@@ -1070,42 +1079,46 @@ export function StudentDetailPage() {
 
         {/* TAB 5: TERMO, LGPD & ASSINATURA */}
         {activeTab === 'consent' && anamnesis && (
-          <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
-            <div className="flex items-center gap-2 text-emerald-700">
-              <ShieldCheck className="h-5 w-5" />
-              <h2 className="text-base font-bold text-slate-900">
+          <div className="space-y-4 rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal">
+            <div className="flex items-center gap-2 border-b border-mk-hairline pb-4 dark:border-white/10">
+              <ShieldCheck className="h-5 w-5 text-mk-gold-text dark:text-mk-gold" />
+              <h2 className="font-serif text-xl font-semibold text-black dark:text-mk-ivory">
                 Termo de Responsabilidade, LGPD e Assinatura
               </h2>
             </div>
 
             <div className="grid gap-3 text-sm sm:grid-cols-2">
-              <div className="rounded-xl bg-slate-50 p-3">
-                <p className="text-xs text-slate-500">Assinante</p>
-                <p className="font-bold text-slate-900">{anamnesis.consent.signerName}</p>
+              <div className="rounded-[4px] bg-mk-alabaster p-3 dark:bg-mk-elevated">
+                <p className="text-xs text-mk-stone dark:text-mk-stone-dark">Assinante</p>
+                <p className="font-bold text-black dark:text-mk-ivory">
+                  {anamnesis.consent.signerName}
+                </p>
               </div>
-              <div className="rounded-xl bg-slate-50 p-3">
-                <p className="text-xs text-slate-500">Data e hora do aceite</p>
-                <p className="font-bold text-slate-900">
+              <div className="rounded-[4px] bg-mk-alabaster p-3 dark:bg-mk-elevated">
+                <p className="text-xs text-mk-stone dark:text-mk-stone-dark">
+                  Data e hora do aceite
+                </p>
+                <p className="font-bold text-black dark:text-mk-ivory">
                   {formatDateTimeBR(anamnesis.consent.signedAt)} (Versão{' '}
                   {anamnesis.consent.termsVersion})
                 </p>
               </div>
             </div>
 
-            <div className="space-y-2 text-xs font-medium text-emerald-800">
-              <p className="rounded-lg bg-emerald-50 px-3 py-2">
+            <div className="space-y-2 text-xs font-medium text-emerald-900 dark:text-emerald-200">
+              <p className="rounded-[4px] border border-emerald-200 bg-emerald-50 px-3 py-2 dark:border-emerald-800/60 dark:bg-emerald-950/40">
                 ✓ Termo de Responsabilidade MK STUDIO aceito.
               </p>
-              <p className="rounded-lg bg-emerald-50 px-3 py-2">
+              <p className="rounded-[4px] border border-emerald-200 bg-emerald-50 px-3 py-2 dark:border-emerald-800/60 dark:bg-emerald-950/40">
                 ✓ Consentimento LGPD para dados pessoais e dados de saúde autorizado.
               </p>
             </div>
 
             <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-mk-stone dark:text-mk-stone-dark">
                 Assinatura capturada
               </p>
-              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white p-3">
+              <div className="overflow-hidden rounded-[4px] border border-mk-gold/50 bg-[#FAF7F0] p-3">
                 <img
                   src={anamnesis.consent.signatureImage}
                   alt={`Assinatura de ${anamnesis.consent.signerName}`}
@@ -1115,6 +1128,10 @@ export function StudentDetailPage() {
             </div>
           </div>
         )}
+
+        <p className="pt-4 text-center text-[10px] font-semibold uppercase tracking-[0.22em] text-mk-stone/80 dark:text-mk-stone-dark/70">
+          MK STUDIO • Piracaia — SP
+        </p>
       </main>
     </div>
   )

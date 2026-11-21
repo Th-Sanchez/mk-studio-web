@@ -25,9 +25,9 @@ export function SignaturePad({ value, onChange }: SignaturePadProps) {
     if (!ctx) return
 
     ctx.scale(ratio, ratio)
-    ctx.fillStyle = '#ffffff'
+    ctx.fillStyle = '#faf7f0'
     ctx.fillRect(0, 0, rect.width, 170)
-    ctx.strokeStyle = '#0f172a'
+    ctx.strokeStyle = '#000000'
     ctx.lineWidth = 2.2
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
@@ -41,7 +41,6 @@ export function SignaturePad({ value, onChange }: SignaturePadProps) {
       }
       img.src = value
     }
-    // Initialize once on mount so drawing strokes are preserved cleanly
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -100,7 +99,7 @@ export function SignaturePad({ value, onChange }: SignaturePadProps) {
     if (!canvas || !ctx) return
 
     const rect = canvas.getBoundingClientRect()
-    ctx.fillStyle = '#ffffff'
+    ctx.fillStyle = '#faf7f0'
     ctx.fillRect(0, 0, rect.width, 170)
     hasStrokeRef.current = false
     setIsEmpty(true)
@@ -110,21 +109,21 @@ export function SignaturePad({ value, onChange }: SignaturePadProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-800">
-          <PenTool className="h-4 w-4 text-slate-600" />
+        <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-black dark:text-mk-ivory">
+          <PenTool className="h-3.5 w-3.5 text-mk-gold-text dark:text-mk-gold" />
           Assinatura do aluno ou responsável legal *
         </span>
         <button
           type="button"
           onClick={handleClear}
-          className="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+          className="inline-flex items-center gap-1 rounded-[4px] border border-mk-hairline bg-white px-2.5 py-1 text-xs font-semibold text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:bg-mk-elevated dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory"
         >
           <Eraser className="h-3.5 w-3.5" />
           Limpar
         </button>
       </div>
 
-      <div className="relative overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-white">
+      <div className="relative overflow-hidden rounded-[4px] border border-mk-gold/60 bg-[#FAF7F0]">
         <canvas
           ref={canvasRef}
           onPointerDown={handlePointerDown}
@@ -135,7 +134,7 @@ export function SignaturePad({ value, onChange }: SignaturePadProps) {
         />
         {isEmpty && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <span className="text-xs font-medium text-slate-400">
+            <span className="text-xs font-medium tracking-wide text-mk-stone/70">
               Assine aqui com o dedo ou mouse
             </span>
           </div>

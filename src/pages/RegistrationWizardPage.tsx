@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  Dumbbell,
   Loader2,
   MessageCircle,
   RotateCcw,
@@ -15,6 +14,7 @@ import {
   Send,
 } from 'lucide-react'
 import { SignaturePad } from '../components/SignaturePad'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { YesNoBooleanField, YesNoDetailField } from '../components/YesNoField'
 import { ApiError } from '../services/api'
 import { fetchCurrentTerms, submitPublicRegistration } from '../services/studentService'
@@ -55,6 +55,15 @@ const STEPS = [
   { number: 6, title: 'Informações Físicas' },
   { number: 7, title: 'Termo, LGPD e Assinatura' },
 ] as const
+
+const INPUT_CLASS =
+  'w-full rounded-[4px] border border-mk-hairline bg-white px-3.5 py-2.5 text-sm text-black placeholder:text-mk-stone/50 focus:border-black focus:outline-none dark:border-white/15 dark:bg-mk-elevated dark:text-mk-ivory dark:placeholder:text-mk-stone-dark/50 dark:focus:border-mk-gold'
+
+const READONLY_INPUT_CLASS =
+  'w-full rounded-[4px] border border-mk-hairline bg-[#F3EFE7] px-3.5 py-2.5 text-sm text-mk-stone dark:border-white/10 dark:bg-white/5 dark:text-mk-stone-dark'
+
+const LABEL_CLASS =
+  'mb-1.5 block text-[11px] font-bold uppercase tracking-[0.12em] text-mk-stone dark:text-mk-stone-dark'
 
 function loadDraft(): PublicRegistrationPayload {
   try {
@@ -321,27 +330,34 @@ export function RegistrationWizardPage() {
       : null
 
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
-        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm sm:p-8">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-            <CheckCircle2 className="h-8 w-8" />
+      <div className="flex min-h-screen items-center justify-center bg-mk-alabaster px-4 py-10 dark:bg-black">
+        <div className="w-full max-w-md rounded-[4px] border border-mk-hairline bg-white p-7 text-center shadow-xs sm:p-9 dark:border-white/12 dark:bg-mk-charcoal">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-mk-gold/40 bg-[#FFF8E7] text-mk-gold-text dark:bg-mk-gold/15 dark:text-mk-gold">
+            <CheckCircle2 className="h-7 w-7" />
           </div>
-          <h1 className="mt-4 text-xl font-bold text-slate-900">Cadastro enviado com sucesso!</h1>
-          <p className="mt-2 text-sm text-slate-600">
-            Obrigado, <strong>{completed.fullName}</strong>! Sua anamnese já foi registrada com
-            segurança no sistema do <strong>MK STUDIO</strong>.
+          <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.24em] text-mk-gold-text dark:text-mk-gold">
+            MK STUDIO • Piracaia — SP
           </p>
-          <p className="mt-2 text-xs text-slate-400">
+          <h1 className="mt-2 font-serif text-2xl font-semibold text-black dark:text-mk-ivory">
+            Cadastro enviado com sucesso
+          </h1>
+          <div className="mx-auto my-4 h-[1px] w-12 bg-mk-gold" />
+          <p className="text-sm leading-relaxed text-mk-stone dark:text-mk-stone-dark">
+            Obrigado, <strong className="text-black dark:text-mk-ivory">{completed.fullName}</strong>
+            . Sua anamnese foi registrada com segurança no sistema do{' '}
+            <strong className="text-black dark:text-mk-ivory">MK STUDIO</strong>.
+          </p>
+          <p className="mt-2 text-xs text-mk-stone/80 dark:text-mk-stone-dark/70">
             Data de registro: {formatDateBR(completed.signedAt)}
           </p>
 
-          <div className="mt-6 space-y-3">
+          <div className="mt-7 space-y-3">
             {notifyUrl && (
               <a
                 href={notifyUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                className="flex w-full items-center justify-center gap-2 rounded-[4px] bg-emerald-600 px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-emerald-700"
               >
                 <MessageCircle className="h-4 w-4" />
                 Avisar o personal no WhatsApp
@@ -349,7 +365,7 @@ export function RegistrationWizardPage() {
             )}
             <Link
               to="/"
-              className="flex w-full items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              className="flex w-full items-center justify-center rounded-[4px] border border-black bg-white px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] text-black hover:bg-black hover:text-white dark:border-white/20 dark:bg-transparent dark:text-mk-ivory dark:hover:border-mk-gold"
             >
               Voltar ao início
             </Link>
@@ -363,38 +379,36 @@ export function RegistrationWizardPage() {
   const currentStepInfo = STEPS[step - 1]
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-12">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto max-w-2xl px-4 py-3">
+    <div className="min-h-screen bg-mk-alabaster pb-12 transition-colors dark:bg-black">
+      <header className="sticky top-0 z-20 border-b border-mk-hairline bg-white/95 backdrop-blur dark:border-white/12 dark:bg-black/95">
+        <div className="mx-auto max-w-2xl px-4 py-3.5">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-white">
-                <Dumbbell className="h-4 w-4" />
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                  ANAMNESE – MK STUDIO
-                </p>
-                <p className="text-xs text-slate-500">
-                  Etapa {step} de {STEPS.length} — {currentStepInfo.title}
-                </p>
-              </div>
+            <div>
+              <p className="font-serif text-base font-semibold tracking-[0.06em] text-black sm:text-lg dark:text-mk-ivory">
+                ANAMNESE – MK STUDIO
+              </p>
+              <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-mk-gold-text dark:text-mk-gold">
+                Etapa {step} de {STEPS.length} — {currentStepInfo.title}
+              </p>
             </div>
 
-            <button
-              type="button"
-              onClick={handleResetDraft}
-              title="Limpar rascunho"
-              className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-800"
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Limpar</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleResetDraft}
+                title="Limpar rascunho"
+                className="inline-flex h-9 items-center gap-1 rounded-[4px] border border-mk-hairline bg-white px-2.5 text-xs font-semibold text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:bg-mk-elevated dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Limpar</span>
+              </button>
+              <ThemeToggle />
+            </div>
           </div>
 
-          <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-200">
+          <div className="mt-3 h-[3px] w-full overflow-hidden bg-mk-hairline dark:bg-white/10">
             <div
-              className="h-full rounded-full bg-slate-900 transition-all duration-300"
+              className="h-full bg-mk-gold transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -403,24 +417,27 @@ export function RegistrationWizardPage() {
 
       <main className="mx-auto max-w-2xl px-4 pt-6">
         {stepError && (
-          <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-sm text-rose-800">
+          <div className="mb-5 flex items-start gap-2.5 rounded-[4px] border border-rose-300 bg-rose-50 p-3.5 text-sm text-rose-800 dark:border-rose-800/60 dark:bg-rose-950/50 dark:text-rose-200">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{stepError}</span>
           </div>
         )}
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6">
-          <h2 className="text-lg font-bold text-slate-900">
-            {step}. {currentStepInfo.title}
-          </h2>
+        <div className="rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-7 dark:border-white/12 dark:bg-mk-charcoal">
+          <div className="border-b border-mk-hairline pb-4 dark:border-white/10">
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-mk-gold-text dark:text-mk-gold">
+              Seção 0{step} / 0{STEPS.length}
+            </p>
+            <h2 className="mt-1 font-serif text-2xl font-semibold text-black dark:text-mk-ivory">
+              {step}. {currentStepInfo.title}
+            </h2>
+          </div>
 
           {/* STEP 1 — DADOS PESSOAIS */}
           {step === 1 && (
             <div className="mt-5 space-y-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                  Nome completo *
-                </label>
+                <label className={LABEL_CLASS}>Nome completo *</label>
                 <input
                   type="text"
                   value={form.personalData.fullName}
@@ -431,15 +448,13 @@ export function RegistrationWizardPage() {
                     }))
                   }
                   placeholder="Seu nome completo"
-                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                  className={INPUT_CLASS}
                 />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Data de nascimento *
-                  </label>
+                  <label className={LABEL_CLASS}>Data de nascimento *</label>
                   <input
                     type="date"
                     value={form.personalData.birthDate}
@@ -449,22 +464,22 @@ export function RegistrationWizardPage() {
                         personalData: { ...prev.personalData, birthDate: e.target.value },
                       }))
                     }
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">Idade</label>
+                  <label className={LABEL_CLASS}>Idade</label>
                   <input
                     type="text"
                     readOnly
                     value={computedAge !== null ? `${computedAge} anos` : 'Automática'}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3.5 py-2.5 text-sm text-slate-600"
+                    className={READONLY_INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">Sexo *</label>
+                  <label className={LABEL_CLASS}>Sexo *</label>
                   <select
                     value={form.personalData.gender}
                     onChange={(e) =>
@@ -473,7 +488,7 @@ export function RegistrationWizardPage() {
                         personalData: { ...prev.personalData, gender: e.target.value as Gender },
                       }))
                     }
-                    className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   >
                     {(Object.keys(GENDER_LABELS) as Gender[]).map((key) => (
                       <option key={key} value={key}>
@@ -486,9 +501,7 @@ export function RegistrationWizardPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Telefone / WhatsApp *
-                  </label>
+                  <label className={LABEL_CLASS}>Telefone / WhatsApp *</label>
                   <input
                     type="tel"
                     inputMode="tel"
@@ -500,14 +513,12 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="(11) 99999-8888"
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    E-mail (opcional)
-                  </label>
+                  <label className={LABEL_CLASS}>E-mail (opcional)</label>
                   <input
                     type="email"
                     value={form.personalData.email ?? ''}
@@ -521,31 +532,31 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="voce@email.com"
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
               </div>
 
-              <div className="border-t border-slate-200 pt-4">
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Endereço
+              <div className="border-t border-mk-hairline pt-5 dark:border-white/10">
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-mk-gold-text dark:text-mk-gold">
+                  Endereço Residencial
                 </p>
 
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">CEP *</label>
+                    <label className={LABEL_CLASS}>CEP *</label>
                     <div className="relative">
                       <input
                         type="text"
                         inputMode="numeric"
                         value={form.personalData.address.zipCode}
                         onChange={(e) => handleZipCodeLookup(e.target.value)}
-                        placeholder="00000-000"
-                        className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 pr-9 text-sm focus:border-slate-900 focus:outline-none"
+                        placeholder="12970-000"
+                        className={`${INPUT_CLASS} pr-9`}
                       />
-                      <div className="pointer-events-none absolute right-3 top-2.5 text-slate-400">
+                      <div className="pointer-events-none absolute right-3 top-2.5 text-mk-stone dark:text-mk-stone-dark">
                         {cepLoading ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <Loader2 className="h-4 w-4 animate-spin text-mk-gold" />
                         ) : (
                           <Search className="h-4 w-4" />
                         )}
@@ -554,9 +565,7 @@ export function RegistrationWizardPage() {
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Endereço (Rua / Avenida) *
-                    </label>
+                    <label className={LABEL_CLASS}>Endereço (Rua / Avenida) *</label>
                     <input
                       type="text"
                       value={form.personalData.address.street}
@@ -570,16 +579,14 @@ export function RegistrationWizardPage() {
                         }))
                       }
                       placeholder="Nome da rua"
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                      className={INPUT_CLASS}
                     />
                   </div>
                 </div>
 
                 <div className="mt-4 grid gap-4 sm:grid-cols-3">
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Número *
-                    </label>
+                    <label className={LABEL_CLASS}>Número *</label>
                     <input
                       type="text"
                       value={form.personalData.address.number}
@@ -593,14 +600,12 @@ export function RegistrationWizardPage() {
                         }))
                       }
                       placeholder="123"
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                      className={INPUT_CLASS}
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Complemento (opcional)
-                    </label>
+                    <label className={LABEL_CLASS}>Complemento (opcional)</label>
                     <input
                       type="text"
                       value={form.personalData.address.complement ?? ''}
@@ -617,16 +622,14 @@ export function RegistrationWizardPage() {
                         }))
                       }
                       placeholder="Apto, bloco, casa..."
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                      className={INPUT_CLASS}
                     />
                   </div>
                 </div>
 
                 <div className="mt-4 grid gap-4 sm:grid-cols-3">
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Bairro *
-                    </label>
+                    <label className={LABEL_CLASS}>Bairro *</label>
                     <input
                       type="text"
                       value={form.personalData.address.neighborhood}
@@ -639,14 +642,12 @@ export function RegistrationWizardPage() {
                           },
                         }))
                       }
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                      className={INPUT_CLASS}
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Cidade *
-                    </label>
+                    <label className={LABEL_CLASS}>Cidade *</label>
                     <input
                       type="text"
                       value={form.personalData.address.city}
@@ -659,14 +660,13 @@ export function RegistrationWizardPage() {
                           },
                         }))
                       }
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                      placeholder="Piracaia"
+                      className={INPUT_CLASS}
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Estado (UF) *
-                    </label>
+                    <label className={LABEL_CLASS}>Estado (UF) *</label>
                     <input
                       type="text"
                       maxLength={2}
@@ -684,7 +684,7 @@ export function RegistrationWizardPage() {
                         }))
                       }
                       placeholder="SP"
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm uppercase focus:border-slate-900 focus:outline-none"
+                      className={`${INPUT_CLASS} uppercase`}
                     />
                   </div>
                 </div>
@@ -695,15 +695,13 @@ export function RegistrationWizardPage() {
           {/* STEP 2 — CONTATO DE EMERGÊNCIA */}
           {step === 2 && (
             <div className="mt-5 space-y-4">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-mk-stone dark:text-mk-stone-dark">
                 Informe alguém de confiança para acionarmos caso ocorra qualquer imprevisto durante o
                 treino.
               </p>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                  Nome completo do contato de emergência *
-                </label>
+                <label className={LABEL_CLASS}>Nome completo do contato de emergência *</label>
                 <input
                   type="text"
                   value={form.emergencyContact.fullName}
@@ -714,15 +712,13 @@ export function RegistrationWizardPage() {
                     }))
                   }
                   placeholder="Nome do familiar ou responsável"
-                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                  className={INPUT_CLASS}
                 />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Grau de parentesco *
-                  </label>
+                  <label className={LABEL_CLASS}>Grau de parentesco *</label>
                   <input
                     type="text"
                     value={form.emergencyContact.relationship}
@@ -736,14 +732,12 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="Ex.: Mãe, Cônjuge, Irmão..."
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Telefone para contato *
-                  </label>
+                  <label className={LABEL_CLASS}>Telefone para contato *</label>
                   <input
                     type="tel"
                     inputMode="tel"
@@ -758,7 +752,7 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="(11) 98888-7777"
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
               </div>
@@ -768,14 +762,15 @@ export function RegistrationWizardPage() {
           {/* STEP 3 — HISTÓRICO MÉDICO E ENTREVISTA DE SAÚDE */}
           {step === 3 && (
             <div className="mt-5 space-y-6">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-mk-stone dark:text-mk-stone-dark">
                 Responda com sinceridade — essas informações garantem sua segurança durante os
-                treinos. Quando marcar <strong>Sim</strong>, você pode detalhar rapidamente.
+                treinos. Quando marcar{' '}
+                <strong className="text-black dark:text-mk-ivory">Sim</strong>, você pode detalhar
+                rapidamente.
               </p>
 
-              {/* 3.1 Condições atuais */}
               <section className="space-y-2.5">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700">
+                <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
                   Condições atuais
                 </h3>
                 {(
@@ -816,9 +811,8 @@ export function RegistrationWizardPage() {
                 ))}
               </section>
 
-              {/* 3.2 Histórico familiar */}
-              <section className="space-y-2.5 border-t border-slate-200 pt-5">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700">
+              <section className="space-y-2.5 border-t border-mk-hairline pt-5 dark:border-white/10">
+                <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
                   Histórico familiar
                 </h3>
                 <YesNoBooleanField
@@ -877,8 +871,8 @@ export function RegistrationWizardPage() {
                   }
                 />
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Existe algum outro histórico familiar relevante? (opcional)
+                  <label className={LABEL_CLASS}>
+                    Outro histórico familiar relevante (opcional)
                   </label>
                   <input
                     type="text"
@@ -896,14 +890,13 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="Se houver, informe aqui"
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
               </section>
 
-              {/* 3.3 Hábitos de vida */}
-              <section className="space-y-3 border-t border-slate-200 pt-5">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700">
+              <section className="space-y-3 border-t border-mk-hairline pt-5 dark:border-white/10">
+                <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
                   Hábitos de vida
                 </h3>
                 <YesNoBooleanField
@@ -954,9 +947,7 @@ export function RegistrationWizardPage() {
 
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Qualidade de sono *
-                    </label>
+                    <label className={LABEL_CLASS}>Qualidade de sono *</label>
                     <select
                       value={form.medicalHistory.lifestyleHabits.sleepQuality}
                       onChange={(e) =>
@@ -971,7 +962,7 @@ export function RegistrationWizardPage() {
                           },
                         }))
                       }
-                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                      className={INPUT_CLASS}
                     >
                       {(Object.keys(SLEEP_QUALITY_LABELS) as SleepQuality[]).map((key) => (
                         <option key={key} value={key}>
@@ -982,9 +973,7 @@ export function RegistrationWizardPage() {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Horas de sono / noite *
-                    </label>
+                    <label className={LABEL_CLASS}>Horas de sono / noite *</label>
                     <input
                       type="number"
                       step="0.5"
@@ -1003,14 +992,12 @@ export function RegistrationWizardPage() {
                           },
                         }))
                       }
-                      className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                      className={INPUT_CLASS}
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Nível de estresse *
-                    </label>
+                    <label className={LABEL_CLASS}>Nível de estresse *</label>
                     <select
                       value={form.medicalHistory.lifestyleHabits.stressLevel}
                       onChange={(e) =>
@@ -1025,7 +1012,7 @@ export function RegistrationWizardPage() {
                           },
                         }))
                       }
-                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                      className={INPUT_CLASS}
                     >
                       {(Object.keys(STRESS_LEVEL_LABELS) as StressLevel[]).map((key) => (
                         <option key={key} value={key}>
@@ -1037,9 +1024,8 @@ export function RegistrationWizardPage() {
                 </div>
               </section>
 
-              {/* 3.4 Histórico de lesões */}
-              <section className="space-y-2.5 border-t border-slate-200 pt-5">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700">
+              <section className="space-y-2.5 border-t border-mk-hairline pt-5 dark:border-white/10">
+                <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
                   Histórico de lesões
                 </h3>
                 {(
@@ -1084,9 +1070,8 @@ export function RegistrationWizardPage() {
                 ))}
               </section>
 
-              {/* 3.5 Medicamentos e acompanhamento */}
-              <section className="space-y-2.5 border-t border-slate-200 pt-5">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700">
+              <section className="space-y-2.5 border-t border-mk-hairline pt-5 dark:border-white/10">
+                <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
                   Medicamentos e acompanhamento
                 </h3>
                 <YesNoBooleanField
@@ -1112,9 +1097,7 @@ export function RegistrationWizardPage() {
 
                 {form.medicalHistory.medicationsAndCare.usesMedication && (
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Quais medicamentos utiliza?
-                    </label>
+                    <label className={LABEL_CLASS}>Quais medicamentos utiliza?</label>
                     <input
                       type="text"
                       value={form.medicalHistory.medicationsAndCare.medicationsList ?? ''}
@@ -1131,7 +1114,7 @@ export function RegistrationWizardPage() {
                         }))
                       }
                       placeholder="Ex.: Losartana, Levotiroxina..."
-                      className="w-full rounded-xl border border-amber-300 bg-amber-50/40 px-3.5 py-2.5 text-sm focus:border-amber-500 focus:bg-white focus:outline-none"
+                      className="w-full rounded-[4px] border border-mk-gold/60 bg-[#FFFDF7] px-3.5 py-2.5 text-sm text-black focus:border-mk-gold focus:bg-white focus:outline-none dark:border-mk-gold/50 dark:bg-mk-elevated dark:text-mk-ivory"
                     />
                   </div>
                 )}
@@ -1226,7 +1209,7 @@ export function RegistrationWizardPage() {
 
               {form.physicalActivityHistory.practicedWeightTraining && (
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                  <label className={LABEL_CLASS}>
                     Há quanto tempo pratica ou praticou musculação?
                   </label>
                   <input
@@ -1242,7 +1225,7 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="Ex.: 1 ano e meio, 6 meses..."
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
               )}
@@ -1269,9 +1252,7 @@ export function RegistrationWizardPage() {
               {form.physicalActivityHistory.currentlyActive ? (
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Qual atividade pratica?
-                    </label>
+                    <label className={LABEL_CLASS}>Qual atividade pratica?</label>
                     <input
                       type="text"
                       value={form.physicalActivityHistory.currentActivity ?? ''}
@@ -1285,14 +1266,12 @@ export function RegistrationWizardPage() {
                         }))
                       }
                       placeholder="Ex.: Caminhada, corrida, pilates..."
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                      className={INPUT_CLASS}
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Quantas vezes por semana?
-                    </label>
+                    <label className={LABEL_CLASS}>Quantas vezes por semana?</label>
                     <select
                       value={form.physicalActivityHistory.currentWeeklyFrequency ?? 3}
                       onChange={(e) =>
@@ -1304,7 +1283,7 @@ export function RegistrationWizardPage() {
                           },
                         }))
                       }
-                      className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                      className={INPUT_CLASS}
                     >
                       {[1, 2, 3, 4, 5, 6, 7].map((n) => (
                         <option key={n} value={n}>
@@ -1316,9 +1295,7 @@ export function RegistrationWizardPage() {
                 </div>
               ) : (
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Quanto tempo está sem treinar?
-                  </label>
+                  <label className={LABEL_CLASS}>Quanto tempo está sem treinar?</label>
                   <input
                     type="text"
                     value={form.physicalActivityHistory.timeInactive ?? ''}
@@ -1332,7 +1309,7 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="Ex.: 6 meses, 2 anos, nunca treinei..."
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
               )}
@@ -1358,9 +1335,7 @@ export function RegistrationWizardPage() {
           {step === 5 && (
             <div className="mt-5 space-y-5">
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Qual é seu principal objetivo? *
-                </label>
+                <label className={LABEL_CLASS}>Qual é seu principal objetivo? *</label>
                 <div className="grid gap-2.5 sm:grid-cols-2">
                   {(Object.keys(PRIMARY_GOAL_LABELS) as PrimaryGoal[]).map((goalKey) => {
                     const selected = form.goalsAndExpectations.primaryGoal === goalKey
@@ -1381,10 +1356,10 @@ export function RegistrationWizardPage() {
                             },
                           }))
                         }
-                        className={`rounded-xl border px-3.5 py-3 text-left text-sm font-medium transition ${
+                        className={`rounded-[4px] border px-3.5 py-3 text-left text-sm font-medium transition ${
                           selected
-                            ? 'border-slate-900 bg-slate-900 text-white shadow-xs'
-                            : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400'
+                            ? 'border-mk-gold bg-mk-gold font-semibold text-black'
+                            : 'border-mk-hairline bg-white text-black hover:border-black dark:border-white/15 dark:bg-mk-elevated dark:text-mk-ivory dark:hover:border-mk-gold'
                         }`}
                       >
                         {PRIMARY_GOAL_LABELS[goalKey]}
@@ -1396,9 +1371,7 @@ export function RegistrationWizardPage() {
 
               {form.goalsAndExpectations.primaryGoal === 'OTHER' && (
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Descreva seu objetivo principal *
-                  </label>
+                  <label className={LABEL_CLASS}>Descreva seu objetivo principal *</label>
                   <input
                     type="text"
                     value={form.goalsAndExpectations.primaryGoalOther ?? ''}
@@ -1412,16 +1385,14 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="Ex.: Preparação para prova de corrida"
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
               )}
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Qual é seu objetivo secundário? (opcional)
-                  </label>
+                  <label className={LABEL_CLASS}>Objetivo secundário (opcional)</label>
                   <input
                     type="text"
                     value={form.goalsAndExpectations.secondaryGoal ?? ''}
@@ -1435,13 +1406,13 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="Ex.: Melhorar postura e disposição"
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Alguma região do corpo com maior atenção? (opcional)
+                  <label className={LABEL_CLASS}>
+                    Região do corpo com maior atenção (opcional)
                   </label>
                   <input
                     type="text"
@@ -1456,13 +1427,13 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="Ex.: Glúteos, pernas, costas, abdômen..."
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                <label className={LABEL_CLASS}>
                   Qual é sua disponibilidade semanal para treinar? *
                 </label>
                 <input
@@ -1478,12 +1449,12 @@ export function RegistrationWizardPage() {
                     }))
                   }
                   placeholder="Ex.: Segunda, quarta e sexta às 18h ou manhã cedo"
-                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                  className={INPUT_CLASS}
                 />
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">
+                <label className={LABEL_CLASS}>
                   Quantas vezes por semana pretende treinar? *
                 </label>
                 <div className="grid grid-cols-7 gap-2">
@@ -1502,10 +1473,10 @@ export function RegistrationWizardPage() {
                             },
                           }))
                         }
-                        className={`min-h-[44px] rounded-xl border text-sm font-bold transition ${
+                        className={`min-h-[44px] rounded-[4px] border text-sm font-bold transition ${
                           selected
-                            ? 'border-slate-900 bg-slate-900 text-white'
-                            : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                            ? 'border-mk-gold bg-mk-gold text-black'
+                            : 'border-mk-hairline bg-white text-black hover:border-black dark:border-white/15 dark:bg-mk-elevated dark:text-mk-ivory dark:hover:border-mk-gold'
                         }`}
                       >
                         {freq}x
@@ -1520,16 +1491,14 @@ export function RegistrationWizardPage() {
           {/* STEP 6 — INFORMAÇÕES FÍSICAS */}
           {step === 6 && (
             <div className="mt-5 space-y-4">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-mk-stone dark:text-mk-stone-dark">
                 Preencha o que você souber — caso não saiba alguma medida, o personal completa com
                 você na avaliação presencial.
               </p>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Peso atual (kg)
-                  </label>
+                  <label className={LABEL_CLASS}>Peso atual (kg)</label>
                   <input
                     type="number"
                     step="0.1"
@@ -1545,14 +1514,12 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="Ex.: 72.5"
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Altura (cm)
-                  </label>
+                  <label className={LABEL_CLASS}>Altura (cm)</label>
                   <input
                     type="number"
                     step="0.5"
@@ -1568,31 +1535,29 @@ export function RegistrationWizardPage() {
                       }))
                     }
                     placeholder="Ex.: 175"
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+              <div className="rounded-[4px] border border-mk-hairline bg-mk-alabaster p-3.5 dark:border-white/12 dark:bg-mk-elevated">
                 <button
                   type="button"
                   onClick={() => setShowOptionalMetrics((prev) => !prev)}
-                  className="flex w-full items-center justify-between text-sm font-semibold text-slate-700"
+                  className="flex w-full items-center justify-between text-xs font-bold uppercase tracking-[0.14em] text-black dark:text-mk-ivory"
                 >
                   <span>Medidas complementares (opcionais)</span>
                   {showOptionalMetrics ? (
-                    <ChevronUp className="h-4 w-4" />
+                    <ChevronUp className="h-4 w-4 text-mk-gold-text dark:text-mk-gold" />
                   ) : (
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-4 w-4 text-mk-gold-text dark:text-mk-gold" />
                   )}
                 </button>
 
                 {showOptionalMetrics && (
                   <div className="mt-4 grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-1 block text-xs font-medium text-slate-600">
-                        Percentual de gordura corporal (%)
-                      </label>
+                      <label className={LABEL_CLASS}>Percentual de gordura (%)</label>
                       <input
                         type="number"
                         step="0.1"
@@ -1608,14 +1573,12 @@ export function RegistrationWizardPage() {
                           }))
                         }
                         placeholder="Ex.: 18.5"
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+                        className={INPUT_CLASS}
                       />
                     </div>
 
                     <div>
-                      <label className="mb-1 block text-xs font-medium text-slate-600">
-                        Massa muscular (kg)
-                      </label>
+                      <label className={LABEL_CLASS}>Massa muscular (kg)</label>
                       <input
                         type="number"
                         step="0.1"
@@ -1631,14 +1594,12 @@ export function RegistrationWizardPage() {
                           }))
                         }
                         placeholder="Ex.: 35.0"
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+                        className={INPUT_CLASS}
                       />
                     </div>
 
                     <div>
-                      <label className="mb-1 block text-xs font-medium text-slate-600">
-                        Pressão arterial
-                      </label>
+                      <label className={LABEL_CLASS}>Pressão arterial</label>
                       <input
                         type="text"
                         value={form.physicalAssessment.bloodPressure ?? ''}
@@ -1652,14 +1613,12 @@ export function RegistrationWizardPage() {
                           }))
                         }
                         placeholder="Ex.: 120/80"
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+                        className={INPUT_CLASS}
                       />
                     </div>
 
                     <div>
-                      <label className="mb-1 block text-xs font-medium text-slate-600">
-                        Frequência cardíaca em repouso (bpm)
-                      </label>
+                      <label className={LABEL_CLASS}>FC em repouso (bpm)</label>
                       <input
                         type="number"
                         inputMode="numeric"
@@ -1674,7 +1633,7 @@ export function RegistrationWizardPage() {
                           }))
                         }
                         placeholder="Ex.: 68"
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+                        className={INPUT_CLASS}
                       />
                     </div>
                   </div>
@@ -1686,11 +1645,11 @@ export function RegistrationWizardPage() {
           {/* STEP 7 — TERMO DE RESPONSABILIDADE, LGPD E ASSINATURA */}
           {step === 7 && (
             <div className="mt-5 space-y-5">
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+              <div className="rounded-[4px] border border-mk-hairline bg-mk-alabaster p-4 dark:border-white/12 dark:bg-mk-elevated">
+                <h3 className="font-serif text-sm font-semibold uppercase tracking-[0.08em] text-black dark:text-mk-gold">
                   {terms.title}
                 </h3>
-                <div className="mt-3 space-y-2.5 text-xs leading-relaxed text-slate-700 sm:text-sm">
+                <div className="mt-3 space-y-2.5 text-xs leading-relaxed text-mk-stone sm:text-sm dark:text-mk-ivory/85">
                   {terms.paragraphs.map((paragraph, idx) => (
                     <p key={idx}>{paragraph}</p>
                   ))}
@@ -1698,7 +1657,7 @@ export function RegistrationWizardPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-3.5 hover:bg-slate-50">
+                <label className="flex cursor-pointer items-start gap-3 rounded-[4px] border border-mk-hairline p-3.5 hover:border-black dark:border-white/15 dark:hover:border-mk-gold">
                   <input
                     type="checkbox"
                     checked={form.consent.termsAccepted}
@@ -1708,12 +1667,14 @@ export function RegistrationWizardPage() {
                         consent: { ...prev.consent, termsAccepted: e.target.checked },
                       }))
                     }
-                    className="mt-0.5 h-5 w-5 rounded border-slate-300 accent-slate-900"
+                    className="mt-0.5 h-5 w-5 rounded-[2px] border-mk-hairline accent-black dark:accent-mk-gold"
                   />
-                  <span className="text-sm text-slate-800">{terms.termsAcceptanceLabel}</span>
+                  <span className="text-sm text-black dark:text-mk-ivory">
+                    {terms.termsAcceptanceLabel}
+                  </span>
                 </label>
 
-                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-3.5 hover:bg-slate-50">
+                <label className="flex cursor-pointer items-start gap-3 rounded-[4px] border border-mk-hairline p-3.5 hover:border-black dark:border-white/15 dark:hover:border-mk-gold">
                   <input
                     type="checkbox"
                     checked={form.consent.lgpdConsentAccepted}
@@ -1723,15 +1684,17 @@ export function RegistrationWizardPage() {
                         consent: { ...prev.consent, lgpdConsentAccepted: e.target.checked },
                       }))
                     }
-                    className="mt-0.5 h-5 w-5 rounded border-slate-300 accent-slate-900"
+                    className="mt-0.5 h-5 w-5 rounded-[2px] border-mk-hairline accent-black dark:accent-mk-gold"
                   />
-                  <span className="text-sm text-slate-800">{terms.lgpdConsentLabel}</span>
+                  <span className="text-sm text-black dark:text-mk-ivory">
+                    {terms.lgpdConsentLabel}
+                  </span>
                 </label>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="sm:col-span-2">
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                  <label className={LABEL_CLASS}>
                     Nome completo do aluno (ou responsável legal) *
                   </label>
                   <input
@@ -1743,19 +1706,17 @@ export function RegistrationWizardPage() {
                         consent: { ...prev.consent, signerName: e.target.value },
                       }))
                     }
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Data do preenchimento
-                  </label>
+                  <label className={LABEL_CLASS}>Data do preenchimento</label>
                   <input
                     type="text"
                     readOnly
                     value={new Date().toLocaleDateString('pt-BR')}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3.5 py-2.5 text-sm text-slate-600"
+                    className={READONLY_INPUT_CLASS}
                   />
                 </div>
               </div>
@@ -1773,12 +1734,12 @@ export function RegistrationWizardPage() {
           )}
 
           {/* NAVIGATION FOOTER */}
-          <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-200 pt-5">
+          <div className="mt-8 flex items-center justify-between gap-3 border-t border-mk-hairline pt-5 dark:border-white/10">
             {step > 1 ? (
               <button
                 type="button"
                 onClick={handleBack}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 rounded-[4px] border border-mk-hairline bg-white px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] text-black hover:border-black dark:border-white/20 dark:bg-transparent dark:text-mk-ivory dark:hover:border-mk-gold"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
@@ -1786,7 +1747,7 @@ export function RegistrationWizardPage() {
             ) : (
               <Link
                 to="/"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 px-3.5 py-3 text-sm font-medium text-slate-500 hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 rounded-[4px] border border-mk-hairline px-3.5 py-3 text-xs font-bold uppercase tracking-[0.14em] text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Início
@@ -1797,7 +1758,7 @@ export function RegistrationWizardPage() {
               <button
                 type="button"
                 onClick={handleNext}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                className="inline-flex items-center gap-1.5 rounded-[4px] bg-mk-gold px-5 py-3 text-xs font-bold uppercase tracking-[0.14em] text-black transition hover:bg-mk-gold-hover"
               >
                 Próximo
                 <ArrowRight className="h-4 w-4" />
@@ -1807,7 +1768,7 @@ export function RegistrationWizardPage() {
                 type="button"
                 disabled={submitting}
                 onClick={handleSubmit}
-                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-[4px] bg-mk-gold px-5 py-3 text-xs font-bold uppercase tracking-[0.14em] text-black transition hover:bg-mk-gold-hover disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? (
                   <>
@@ -1825,8 +1786,11 @@ export function RegistrationWizardPage() {
           </div>
         </div>
 
-        <p className="mt-4 text-center text-xs text-slate-400">
-          Seu progresso é salvo automaticamente neste aparelho.
+        <p className="mt-5 text-center text-[11px] text-mk-stone dark:text-mk-stone-dark">
+          Seu progresso é salvo automaticamente neste aparelho •{' '}
+          <span className="font-semibold uppercase tracking-[0.14em]">
+            MK STUDIO — Piracaia, SP
+          </span>
         </p>
       </main>
     </div>

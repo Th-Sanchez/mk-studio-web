@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Activity, ClipboardList, Dumbbell, Lock } from 'lucide-react'
+import { Activity, ArrowRight, Lock } from 'lucide-react'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { checkApiHealth } from '../services/api'
 
 export function HomePage() {
@@ -13,50 +14,69 @@ export function HomePage() {
   }, [])
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-xs">
-            <Dumbbell className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900">MK STUDIO</h1>
-            <p className="text-sm text-slate-500">Anamnese Online & Gestão de Alunos</p>
-          </div>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-mk-alabaster px-4 py-10 transition-colors dark:bg-black">
+      <div className="relative w-full max-w-md rounded-[4px] border border-mk-hairline bg-white p-7 shadow-xs sm:p-10 dark:border-white/12 dark:bg-mk-charcoal">
+        <div className="absolute right-4 top-4">
+          <ThemeToggle />
         </div>
 
-        <p className="mt-5 text-sm leading-relaxed text-slate-600">
-          Bem-vindo ao portal do <strong>MK STUDIO</strong>. Se você é aluno, preencha sua ficha de
-          anamnese online para agilizarmos sua avaliação. Se é o personal responsável, acesse o
-          painel administrativo.
+        <div className="pt-2 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-mk-gold-text dark:text-mk-gold">
+            Personal Training Exclusivo
+          </p>
+
+          <h1 className="mt-3 font-serif text-4xl font-semibold tracking-[0.04em] text-black sm:text-5xl dark:text-mk-ivory">
+            MK STUDIO
+          </h1>
+
+          <div className="mx-auto my-5 h-[1.5px] w-14 bg-mk-gold" />
+
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mk-stone dark:text-mk-stone-dark">
+            Anamnese Online &amp; Gestão de Alunos
+          </p>
+        </div>
+
+        <p className="mt-6 text-center text-sm leading-relaxed text-mk-stone dark:text-mk-stone-dark">
+          Preencha sua ficha de anamnese online para agilizarmos sua avaliação personalizada e
+          garantirmos um atendimento seguro e sob medida.
         </p>
 
-        <div className="mt-6 space-y-3">
+        <div className="mt-8 space-y-3">
           <Link
             to="/cadastro"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="flex w-full items-center justify-center gap-2 rounded-[4px] bg-mk-gold px-5 py-3.5 text-xs font-bold uppercase tracking-[0.14em] text-black transition hover:bg-mk-gold-hover"
           >
-            <ClipboardList className="h-4 w-4" />
-            Preencher Anamnese (Sou Aluno)
+            <span>Preencher Anamnese (Sou Aluno)</span>
+            <ArrowRight className="h-4 w-4" />
           </Link>
 
           <Link
             to="/login"
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
+            className="flex w-full items-center justify-center gap-2 rounded-[4px] border border-black bg-white px-5 py-3.5 text-xs font-bold uppercase tracking-[0.14em] text-black transition hover:bg-black hover:text-white dark:border-mk-gold/60 dark:bg-transparent dark:text-mk-ivory dark:hover:bg-mk-gold/10"
           >
-            <Lock className="h-4 w-4" />
-            Acessar Painel do Personal
+            <Lock className="h-3.5 w-3.5" />
+            <span>Acessar Painel do Personal</span>
           </Link>
         </div>
 
-        <div className="mt-6 flex items-center gap-2 rounded-xl bg-slate-100 px-3.5 py-2.5 text-xs font-medium text-slate-600">
-          <Activity className="h-3.5 w-3.5 shrink-0" />
-          <span>Servidor:</span>
-          {apiStatus === 'checking' && <span className="text-amber-600">Verificando...</span>}
-          {apiStatus === 'up' && <span className="text-emerald-700">Online</span>}
-          {apiStatus === 'down' && (
-            <span className="text-rose-600">Offline (inicie o mk-studio-api na porta 8080)</span>
-          )}
+        <div className="mt-8 border-t border-mk-hairline pt-5 dark:border-white/10">
+          <div className="flex items-center justify-center gap-2 text-[11px] font-medium text-mk-stone dark:text-mk-stone-dark">
+            <Activity className="h-3.5 w-3.5 shrink-0" />
+            <span>API:</span>
+            {apiStatus === 'checking' && (
+              <span className="text-mk-gold-text dark:text-mk-gold">Verificando...</span>
+            )}
+            {apiStatus === 'up' && (
+              <span className="text-emerald-700 dark:text-emerald-400">Online</span>
+            )}
+            {apiStatus === 'down' && (
+              <span className="text-rose-700 dark:text-rose-400">Offline (porta 8080)</span>
+            )}
+          </div>
+
+          <p className="mt-3 text-center text-[10px] font-semibold uppercase tracking-[0.22em] text-mk-stone/80 dark:text-mk-stone-dark/70">
+            MK STUDIO • Piracaia — SP
+          </p>
         </div>
       </div>
     </div>
