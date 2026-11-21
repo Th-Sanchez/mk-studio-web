@@ -1,8 +1,8 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AlertCircle, ArrowLeft, Loader2, Lock } from 'lucide-react'
 import { ThemeToggle } from '../components/ThemeToggle'
-import { ApiError } from '../services/api'
+import { ApiError, checkApiHealth } from '../services/api'
 import { loginAdmin } from '../services/authService'
 
 export function LoginPage() {
@@ -14,6 +14,20 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [slowWakeUp, setSlowWakeUp] = useState(false)
+
+  useEffect(() => {
+    checkApiHealth().catch(() => undefined)
+  }, [])
+
+  useEffect(() => {
+    if (!submitting) {
+      setSlowWakeUp(false)
+      return
+    }
+    const timer = window.setTimeout(() => setSlowWakeUp(true), 4000)
+    return () => window.clearTimeout(timer)
+  }, [submitting])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -27,7 +41,7 @@ export function LoginPage() {
       if (err instanceof ApiError) {
         setError(err.message)
       } else {
-        setError('Não foi possível conectar ao servidor. Verifique se a API está online.')
+        setError('Não foi possível conectar ao servidor. Aguarde alguns segundos e tente novamente.')
       }
     } finally {
       setSubmitting(false)
@@ -83,7 +97,7 @@ export function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@mkstudio.local"
+              placeholder="seu@email.com"
               className="w-full rounded-[4px] border border-mk-hairline bg-white px-3.5 py-2.5 text-sm text-black placeholder:text-mk-stone/50 focus:border-black focus:outline-none dark:border-white/15 dark:bg-mk-elevated dark:text-mk-ivory dark:focus:border-mk-gold"
             />
           </div>
@@ -115,7 +129,7 @@ export function LoginPage() {
             {submitting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Entrando...
+                {slowWakeUp ? 'Conectando ao servidor...' : 'Entrando...'}
               </>
             ) : (
               <>
@@ -124,6 +138,13 @@ export function LoginPage() {
               </>
             )}
           </button>
+
+          {slowWakeUp && (
+            <p className="text-center text-xs text-mk-stone dark:text-mk-stone-dark">
+              O servidor seguro está sendo iniciado. Isso pode levar alguns segundos no primeiro
+              acesso.
+            </p>
+          )}
         </form>
       </div>
     </div>

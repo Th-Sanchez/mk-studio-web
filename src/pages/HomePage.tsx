@@ -1,16 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Activity, ArrowRight, Lock } from 'lucide-react'
+import { ArrowRight, Lock } from 'lucide-react'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { checkApiHealth } from '../services/api'
 
 export function HomePage() {
-  const [apiStatus, setApiStatus] = useState<'checking' | 'up' | 'down'>('checking')
-
   useEffect(() => {
-    checkApiHealth()
-      .then(() => setApiStatus('up'))
-      .catch(() => setApiStatus('down'))
+    checkApiHealth().catch(() => undefined)
   }, [])
 
   return (
@@ -60,21 +56,7 @@ export function HomePage() {
         </div>
 
         <div className="mt-8 border-t border-mk-hairline pt-5 dark:border-white/10">
-          <div className="flex items-center justify-center gap-2 text-[11px] font-medium text-mk-stone dark:text-mk-stone-dark">
-            <Activity className="h-3.5 w-3.5 shrink-0" />
-            <span>API:</span>
-            {apiStatus === 'checking' && (
-              <span className="text-mk-gold-text dark:text-mk-gold">Verificando...</span>
-            )}
-            {apiStatus === 'up' && (
-              <span className="text-emerald-700 dark:text-emerald-400">Online</span>
-            )}
-            {apiStatus === 'down' && (
-              <span className="text-rose-700 dark:text-rose-400">Offline (porta 8080)</span>
-            )}
-          </div>
-
-          <p className="mt-3 text-center text-[10px] font-semibold uppercase tracking-[0.22em] text-mk-stone/80 dark:text-mk-stone-dark/70">
+          <p className="text-center text-[10px] font-semibold uppercase tracking-[0.22em] text-mk-stone/80 dark:text-mk-stone-dark/70">
             MK STUDIO • Piracaia — SP
           </p>
         </div>

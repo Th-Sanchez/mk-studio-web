@@ -1,19 +1,28 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
+  Activity,
   AlertTriangle,
   ArrowLeft,
+  Calendar,
   CheckCircle2,
+  ClipboardList,
+  Contact,
+  Dumbbell,
+  FileSignature,
   Loader2,
   MessageCircle,
   Pencil,
   Phone,
   Save,
+  Scale,
   ShieldCheck,
+  Sparkles,
+  Stethoscope,
+  Target,
   Trash2,
   X,
 } from 'lucide-react'
-import { StatusBadge } from '../components/StatusBadge'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { ApiError } from '../services/api'
 import { logoutAdmin } from '../services/authService'
@@ -52,14 +61,21 @@ const INPUT_CLASS =
   'w-full rounded-[4px] border border-mk-hairline bg-white px-3 py-2 text-sm text-black focus:border-black focus:outline-none dark:border-white/15 dark:bg-mk-elevated dark:text-mk-ivory dark:focus:border-mk-gold'
 
 const LABEL_CLASS =
-  'mb-1 block text-[11px] font-bold uppercase tracking-[0.12em] text-mk-stone dark:text-mk-stone-dark'
+  'mb-1 block text-[10px] font-bold uppercase tracking-[0.16em] text-mk-stone dark:text-mk-stone-dark'
+
+function classifyBmi(bmi: number): string {
+  if (bmi < 18.5) return 'Abaixo do peso'
+  if (bmi < 25) return 'Peso normal'
+  if (bmi < 30) return 'Sobrepeso'
+  return 'Obesidade'
+}
 
 function AnswerRow({ label, item }: { label: string; item: YesNoDetail }) {
   return (
     <div
       className={`rounded-[4px] border p-3 text-sm ${
         item.answer
-          ? 'border-amber-300 bg-[#FFFBEB] text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/35 dark:text-amber-100'
+          ? 'border-amber-300 bg-[#FFFDF5] text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/35 dark:text-amber-100'
           : 'border-mk-hairline bg-white text-black dark:border-white/10 dark:bg-mk-elevated dark:text-mk-ivory'
       }`}
     >
@@ -195,7 +211,7 @@ export function StudentDetailPage() {
       const updated = await updateStudentStatus(student.id, nextStatus)
       setStudent(updated)
       syncForms(updated)
-      showToast(`Status alterado para ${STATUS_LABELS[nextStatus]}.`)
+      showToast(`Status alterado para ${STATUS_LABELS[nextStatus]}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao atualizar status.')
     } finally {
@@ -216,7 +232,7 @@ export function StudentDetailPage() {
       )
       setStudent(updated)
       syncForms(updated)
-      showToast('Avaliação física e observações salvas com sucesso!')
+      showToast('Avaliação salva com sucesso')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao salvar avaliação.')
     } finally {
@@ -234,7 +250,7 @@ export function StudentDetailPage() {
       setStudent(updated)
       syncForms(updated)
       setEditingStudent(false)
-      showToast('Dados cadastrais atualizados!')
+      showToast('Dados cadastrais atualizados')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao atualizar dados do aluno.')
     } finally {
@@ -262,7 +278,7 @@ export function StudentDetailPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-mk-alabaster text-mk-stone dark:bg-black dark:text-mk-stone-dark">
         <Loader2 className="h-6 w-6 animate-spin text-mk-gold" />
-        <p className="mt-2 text-sm">Carregando ficha...</p>
+        <p className="mt-2 text-sm">Carregando dossiê...</p>
       </div>
     )
   }
@@ -285,22 +301,35 @@ export function StudentDetailPage() {
   }
 
   const anamnesis = student.latestAnamnesis
-  const bmi =
+  const shortRegCode = `REG #MK-${student.id.slice(0, 6).toUpperCase()}`
+  const bmiValue =
     assessmentForm.weightKg && assessmentForm.heightCm && assessmentForm.heightCm > 0
-      ? (assessmentForm.weightKg / Math.pow(assessmentForm.heightCm / 100, 2)).toFixed(1)
+      ? assessmentForm.weightKg / Math.pow(assessmentForm.heightCm / 100, 2)
       : null
 
+  const notesLength = assessmentForm.professionalNotes?.length ?? 0
+
   return (
-    <div className="min-h-screen bg-mk-alabaster pb-14 transition-colors dark:bg-black">
-      <header className="sticky top-0 z-20 border-b border-mk-hairline bg-white/95 backdrop-blur dark:border-white/12 dark:bg-black/95">
-        <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3.5">
+    <div className="min-h-screen bg-mk-alabaster pb-16 transition-colors dark:bg-black">
+      {/* Sticky Editorial Top Header */}
+      <header className="sticky top-0 z-30 border-b border-mk-hairline/70 bg-white/95 shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl dark:border-white/12 dark:bg-black/95">
+        <div className="mx-auto flex h-16 max-w-2xl items-center justify-between gap-2 px-4">
           <Link
             to="/alunos"
-            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-black hover:text-mk-gold-text dark:text-mk-ivory dark:hover:text-mk-gold"
+            className="inline-flex h-10 items-center gap-1.5 rounded-[4px] px-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-black transition hover:text-mk-gold-text dark:text-mk-ivory dark:hover:text-mk-gold"
           >
             <ArrowLeft className="h-4 w-4" />
-            Alunos
+            <span>Alunos</span>
           </Link>
+
+          <div className="flex flex-col items-center text-center">
+            <span className="text-[9px] font-semibold uppercase leading-none tracking-[0.25em] text-mk-gold-text dark:text-mk-gold">
+              MK STUDIO
+            </span>
+            <h1 className="mt-0.5 whitespace-nowrap font-serif text-xs font-semibold uppercase leading-tight tracking-[0.15em] text-black dark:text-mk-ivory">
+              Dossiê do Aluno
+            </h1>
+          </div>
 
           <div className="flex items-center gap-2">
             <a
@@ -310,277 +339,490 @@ export function StudentDetailPage() {
               )}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-9 items-center gap-1.5 rounded-[4px] bg-emerald-600 px-3 text-xs font-bold uppercase tracking-[0.1em] text-white transition hover:bg-emerald-700 sm:px-3.5"
+              className="inline-flex h-9 items-center gap-1.5 rounded-[4px] bg-[#16A34A] px-3 text-[11px] font-semibold tracking-wider text-white shadow-[0_1px_4px_rgba(22,163,74,0.2)] transition hover:bg-emerald-700"
             >
               <MessageCircle className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Chamar no WhatsApp</span>
-              <span className="sm:hidden">WhatsApp</span>
+              <span className="hidden sm:inline">WhatsApp</span>
             </a>
             <ThemeToggle />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl space-y-5 px-4 pt-6">
-        {feedback && (
-          <div className="flex items-center gap-2 rounded-[4px] border border-emerald-300 bg-emerald-50 p-3.5 text-sm font-medium text-emerald-900 dark:border-emerald-700/60 dark:bg-emerald-950/50 dark:text-emerald-200">
-            <CheckCircle2 className="h-4 w-4 shrink-0" />
-            <span>{feedback}</span>
+      {/* Floating Bottom Editorial Save Toast */}
+      {feedback && (
+        <div className="fixed inset-x-4 bottom-6 z-50 mx-auto flex max-w-sm items-center justify-between rounded-[4px] bg-black px-4 py-3 text-white shadow-2xl dark:border dark:border-mk-gold/40 dark:bg-mk-charcoal">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-mk-gold" />
+            <span className="text-xs font-semibold tracking-wide">{feedback}</span>
           </div>
-        )}
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-mk-gold">
+            MK • SYNC
+          </span>
+        </div>
+      )}
 
+      <main className="mx-auto max-w-2xl space-y-4 px-4 pt-5">
         {error && (
           <div className="rounded-[4px] border border-rose-300 bg-rose-50 p-3.5 text-sm text-rose-800 dark:border-rose-800/60 dark:bg-rose-950/50 dark:text-rose-200">
             {error}
           </div>
         )}
 
-        {/* Student Header Card */}
-        <section className="rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-mk-gold-text dark:text-mk-gold">
-                Dossiê do Aluno • Cadastro em {formatDateBR(student.createdAt)}
-              </p>
-              <div className="mt-1.5 flex flex-wrap items-center gap-2.5">
-                <h1 className="font-serif text-2xl font-semibold text-black sm:text-3xl dark:text-mk-ivory">
-                  {student.fullName}
-                </h1>
-                <StatusBadge status={student.status} />
-              </div>
-              <p className="mt-1.5 text-sm text-mk-stone dark:text-mk-stone-dark">
-                {student.age} anos ({formatDateBR(student.birthDate)}) •{' '}
-                {GENDER_LABELS[student.gender]} • {formatPhone(student.phone)}
-              </p>
-              {anamnesis && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <span className="rounded-[3px] bg-mk-alabaster px-2.5 py-1 text-xs font-semibold text-black dark:bg-white/10 dark:text-mk-ivory">
-                    {anamnesis.primaryGoal === 'OTHER' && anamnesis.primaryGoalOther
-                      ? anamnesis.primaryGoalOther
-                      : PRIMARY_GOAL_LABELS[anamnesis.primaryGoal]}
-                  </span>
-                  <span className="rounded-[3px] bg-mk-alabaster px-2.5 py-1 text-xs font-semibold text-black dark:bg-white/10 dark:text-mk-ivory">
-                    {anamnesis.intendedWeeklyFrequency}x/semana
-                  </span>
-                </div>
-              )}
+        {/* 1. Student Summary Card (Stitch Vogue Light fidelity) */}
+        <section className="relative overflow-hidden rounded-[4px] bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:border dark:border-white/12 dark:bg-mk-charcoal">
+          {/* Top 2px Gold Gradient Accent */}
+          <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-mk-gold via-mk-gold-text to-transparent" />
+
+          <div className="mb-2 flex items-start justify-between gap-3">
+            <div
+              className={`inline-flex items-center gap-1.5 rounded-[3px] px-2.5 py-0.5 ${
+                student.status === 'NEW'
+                  ? 'bg-[#FFF8E7] text-mk-gold-text dark:bg-mk-gold/15 dark:text-mk-gold'
+                  : student.status === 'ACTIVE'
+                    ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                    : 'bg-mk-alabaster text-mk-stone dark:bg-white/10 dark:text-mk-stone-dark'
+              }`}
+            >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  student.status === 'NEW'
+                    ? 'animate-pulse bg-mk-gold'
+                    : student.status === 'ACTIVE'
+                      ? 'bg-emerald-500'
+                      : 'bg-mk-stone'
+                }`}
+              />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em]">
+                {STATUS_LABELS[student.status]}
+              </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-1.5">
-              {(['NEW', 'ACTIVE', 'INACTIVE'] as StudentStatus[]).map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  disabled={updatingStatus}
-                  onClick={() => handleStatusChange(s)}
-                  className={`rounded-[4px] border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition ${
-                    student.status === s
-                      ? 'border-black bg-black text-white dark:border-mk-gold dark:bg-mk-gold dark:text-black'
-                      : 'border-mk-hairline bg-white text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:bg-mk-elevated dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory'
-                  }`}
-                >
-                  {STATUS_LABELS[s]}
-                </button>
-              ))}
+            <span className="font-mono text-[10px] uppercase tracking-wider text-mk-stone/80 dark:text-mk-stone-dark/80">
+              {shortRegCode}
+            </span>
+          </div>
+
+          <h2 className="mb-1 font-serif text-[26px] font-semibold leading-tight tracking-tight text-black dark:text-mk-ivory">
+            {student.fullName}
+          </h2>
+
+          <p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-mk-stone dark:text-mk-stone-dark">
+            <span>
+              {student.age} anos ({formatDateBR(student.birthDate)})
+            </span>
+            <span className="text-mk-hairline dark:text-white/20">•</span>
+            <span>{GENDER_LABELS[student.gender]}</span>
+            <span className="text-mk-hairline dark:text-white/20">•</span>
+            <span className="font-medium text-black dark:text-mk-ivory">
+              {formatPhone(student.phone)}
+            </span>
+          </p>
+
+          {anamnesis && (
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 rounded-[3px] bg-mk-alabaster px-2.5 py-1 text-black dark:bg-white/8 dark:text-mk-ivory">
+                <Dumbbell className="h-3.5 w-3.5 text-mk-gold-text dark:text-mk-gold" />
+                <span className="text-[11px] font-medium tracking-wide">
+                  {anamnesis.primaryGoal === 'OTHER' && anamnesis.primaryGoalOther
+                    ? anamnesis.primaryGoalOther
+                    : PRIMARY_GOAL_LABELS[anamnesis.primaryGoal]}
+                </span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 rounded-[3px] bg-mk-alabaster px-2.5 py-1 text-black dark:bg-white/8 dark:text-mk-ivory">
+                <Calendar className="h-3.5 w-3.5 text-mk-gold-text dark:text-mk-gold" />
+                <span className="text-[11px] font-medium tracking-wide">
+                  {anamnesis.intendedWeeklyFrequency}x / semana
+                </span>
+              </div>
+              <span className="ml-auto self-center text-[10px] uppercase tracking-widest text-mk-stone/75 dark:text-mk-stone-dark/75">
+                CAD. {formatDateBR(student.createdAt)}
+              </span>
+            </div>
+          )}
+
+          {/* Inset Segmented Status Switcher */}
+          <div className="-mx-5 -mb-5 bg-mk-alabaster/70 px-5 py-3 dark:bg-white/5">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-mk-stone dark:text-mk-stone-dark">
+                Status Cadastral
+              </span>
+              <span className="text-[9px] font-medium uppercase tracking-wider text-mk-gold-text dark:text-mk-gold">
+                Atualizado {formatDateBR(student.updatedAt)}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-1 rounded-[4px] bg-white p-1 shadow-xs dark:bg-mk-elevated">
+              {(['NEW', 'ACTIVE', 'INACTIVE'] as StudentStatus[]).map((s) => {
+                const isSelected = student.status === s
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    disabled={updatingStatus}
+                    onClick={() => handleStatusChange(s)}
+                    className={`flex items-center justify-center gap-1.5 rounded-[3px] py-1.5 text-[11px] uppercase tracking-wider transition-all ${
+                      isSelected
+                        ? 'bg-black font-bold text-white shadow-xs dark:bg-mk-gold dark:text-black'
+                        : 'font-medium text-mk-stone hover:text-black dark:text-mk-stone-dark dark:hover:text-mk-ivory'
+                    }`}
+                  >
+                    {isSelected && (
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          s === 'INACTIVE' ? 'bg-mk-stone' : 'bg-mk-gold dark:bg-black'
+                        }`}
+                      />
+                    )}
+                    {STATUS_LABELS[s]}
+                  </button>
+                )
+              })}
             </div>
           </div>
         </section>
 
-        {/* Health Alerts Banner */}
+        {/* 2. Health Alerts Callout Box (Left 4px Gold Bar) */}
         {anamnesis && anamnesis.healthAlerts.length > 0 && (
-          <section className="rounded-[4px] border border-amber-300 border-l-4 border-l-mk-gold bg-[#FFFDF5] p-4 sm:p-5 dark:border-amber-700/60 dark:border-l-mk-gold dark:bg-amber-950/35">
-            <div className="flex items-center gap-2 text-amber-900 dark:text-amber-300">
-              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-mk-gold" />
-              <h2 className="font-sans text-xs font-bold uppercase tracking-[0.16em]">
-                Alertas de Saúde e Lesões ({anamnesis.healthAlerts.length})
-              </h2>
+          <section className="relative overflow-hidden rounded-[4px] bg-[#FFFDF5] p-4 shadow-[0_1px_8px_rgba(221,164,34,0.08)] dark:border dark:border-amber-700/40 dark:bg-amber-950/30">
+            <div className="absolute inset-y-0 left-0 w-[4px] bg-mk-gold" />
+            <div className="pl-2">
+              <div className="mb-2.5 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 shrink-0 text-mk-gold-text dark:text-mk-gold" />
+                  <h3 className="font-sans text-[11px] font-bold uppercase tracking-[0.18em] text-[#92400E] dark:text-amber-300">
+                    Alertas de Saúde e Lesões ({anamnesis.healthAlerts.length})
+                  </h3>
+                </div>
+                <span className="shrink-0 rounded-[3px] bg-[#FEF3C7] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#92400E] dark:bg-amber-900/60 dark:text-amber-200">
+                  Atenção Clínica
+                </span>
+              </div>
+
+              <ul className="space-y-1.5">
+                {anamnesis.healthAlerts.map((alert, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#D97706] dark:bg-mk-gold" />
+                    <span className="text-xs font-semibold text-black dark:text-mk-ivory">
+                      {alert}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm font-medium text-amber-950 dark:text-amber-100">
-              {anamnesis.healthAlerts.map((alert, idx) => (
-                <li key={idx}>{alert}</li>
-              ))}
-            </ul>
           </section>
         )}
 
-        {/* Editorial Horizontal Tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {(
-            [
-              { id: 'assessment', label: 'Avaliação & Notas' },
-              { id: 'medical', label: 'Histórico Médico' },
-              { id: 'activity', label: 'Atividade & Objetivos' },
-              { id: 'personal', label: 'Cadastro & Emergência' },
-              { id: 'consent', label: 'Termo & Assinatura' },
-            ] as const
-          ).map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`shrink-0 rounded-[4px] border px-3.5 py-2 text-xs font-bold uppercase tracking-[0.1em] transition ${
-                activeTab === tab.id
-                  ? 'border-black bg-black text-white dark:border-mk-gold dark:bg-mk-gold dark:text-black'
-                  : 'border-mk-hairline bg-white text-mk-stone hover:border-black hover:text-black dark:border-white/15 dark:bg-mk-charcoal dark:text-mk-stone-dark dark:hover:border-mk-gold dark:hover:text-mk-ivory'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {/* 3. Editorial Horizontal Scrollable Tabs */}
+        <nav aria-label="Abas do dossiê" className="-mx-4 overflow-x-auto px-4 py-1">
+          <div className="flex min-w-max items-center gap-2">
+            {(
+              [
+                { id: 'assessment', label: 'Avaliação & Notas', Icon: Activity },
+                { id: 'medical', label: 'Histórico Médico', Icon: Stethoscope },
+                { id: 'activity', label: 'Atividade & Objetivos', Icon: Target },
+                { id: 'personal', label: 'Cadastro & Emergência', Icon: Contact },
+                { id: 'consent', label: 'Termo & Assinatura', Icon: FileSignature },
+              ] as const
+            ).map(({ id: tabId, label, Icon }) => {
+              const active = activeTab === tabId
+              return (
+                <button
+                  key={tabId}
+                  type="button"
+                  onClick={() => setActiveTab(tabId)}
+                  className={`flex items-center gap-1.5 rounded-[3px] px-3.5 py-2 text-[11px] uppercase tracking-wider transition-all ${
+                    active
+                      ? 'bg-black font-semibold text-white shadow-xs dark:bg-mk-gold dark:text-black'
+                      : 'bg-white font-medium text-mk-stone shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:text-black dark:border dark:border-white/10 dark:bg-mk-charcoal dark:text-mk-stone-dark dark:hover:text-mk-ivory'
+                  }`}
+                >
+                  <Icon
+                    className={`h-3.5 w-3.5 ${
+                      active ? 'text-mk-gold dark:text-black' : 'text-mk-stone dark:text-mk-stone-dark'
+                    }`}
+                  />
+                  <span>{label}</span>
+                </button>
+              )
+            })}
+          </div>
+        </nav>
 
-        {/* TAB 1: AVALIAÇÃO FÍSICA & OBSERVAÇÕES */}
+        {/* TAB 1: 6. INFORMAÇÕES FÍSICAS E AVALIAÇÃO */}
         {activeTab === 'assessment' && anamnesis && (
-          <form
-            onSubmit={handleSaveAssessment}
-            className="rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-mk-hairline pb-4 dark:border-white/10">
-              <div>
-                <h2 className="font-serif text-xl font-semibold text-black dark:text-mk-ivory">
-                  6. Informações Físicas e Avaliação
-                </h2>
-                <p className="mt-0.5 text-xs text-mk-stone dark:text-mk-stone-dark">
-                  Complemente ou atualize as medidas e observações profissionais deste aluno.
-                </p>
-              </div>
-              {bmi && (
-                <span className="rounded-[4px] border border-mk-gold/60 bg-[#FFF8E7] px-3 py-1.5 text-xs font-bold text-mk-gold-text dark:bg-mk-gold/15 dark:text-mk-gold">
-                  IMC estimado: {bmi}
+          <section className="space-y-5 rounded-[4px] bg-white p-5 shadow-[0_2px_14px_rgba(0,0,0,0.04)] dark:border dark:border-white/12 dark:bg-mk-charcoal">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-mk-gold-text dark:text-mk-gold">
+                  Módulo de Performance
                 </span>
-              )}
+                <span className="font-mono text-[10px] text-mk-stone dark:text-mk-stone-dark">
+                  {formatDateBR(anamnesis.updatedAt)}
+                </span>
+              </div>
+              <h3 className="font-serif text-lg font-semibold tracking-tight text-black dark:text-mk-ivory">
+                6. Informações Físicas e Avaliação
+              </h3>
+              <p className="text-xs leading-relaxed text-mk-stone dark:text-mk-stone-dark">
+                Métricas antropométricas e notas clínicas do treinador responsável.
+              </p>
             </div>
 
-            <div className="mt-5 grid gap-4 sm:grid-cols-3">
-              <div>
-                <label className={LABEL_CLASS}>Peso atual (kg)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={assessmentForm.weightKg ?? ''}
-                  onChange={(e) =>
-                    setAssessmentForm((prev) => ({
-                      ...prev,
-                      weightKg: parseOptionalNumber(e.target.value),
-                    }))
-                  }
-                  className={INPUT_CLASS}
-                />
+            {/* Highlight IMC Card */}
+            {bmiValue !== null && (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-[4px] bg-mk-alabaster p-3.5 dark:bg-mk-elevated">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[3px] bg-white text-mk-gold-text shadow-2xs dark:bg-mk-charcoal dark:text-mk-gold">
+                    <Scale className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <span className="block text-[9px] font-bold uppercase tracking-[0.2em] text-mk-stone dark:text-mk-stone-dark">
+                      Diagnóstico Corporal
+                    </span>
+                    <span className="text-sm font-bold text-black dark:text-mk-ivory">
+                      IMC estimado:{' '}
+                      <span className="font-serif text-base text-mk-gold-text dark:text-mk-gold">
+                        {bmiValue.toFixed(1)}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <span className="inline-block rounded-[3px] bg-white px-2.5 py-1 text-[10px] font-semibold tracking-wide text-black shadow-2xs dark:bg-mk-charcoal dark:text-mk-ivory">
+                  {classifyBmi(bmiValue)}
+                </span>
               </div>
-              <div>
-                <label className={LABEL_CLASS}>Altura (cm)</label>
-                <input
-                  type="number"
-                  step="0.5"
-                  value={assessmentForm.heightCm ?? ''}
-                  onChange={(e) =>
-                    setAssessmentForm((prev) => ({
-                      ...prev,
-                      heightCm: parseOptionalNumber(e.target.value),
-                    }))
-                  }
-                  className={INPUT_CLASS}
-                />
-              </div>
-              <div>
-                <label className={LABEL_CLASS}>% Gordura corporal</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={assessmentForm.bodyFatPercentage ?? ''}
-                  onChange={(e) =>
-                    setAssessmentForm((prev) => ({
-                      ...prev,
-                      bodyFatPercentage: parseOptionalNumber(e.target.value),
-                    }))
-                  }
-                  className={INPUT_CLASS}
-                />
-              </div>
-              <div>
-                <label className={LABEL_CLASS}>Massa muscular (kg)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={assessmentForm.muscleMassKg ?? ''}
-                  onChange={(e) =>
-                    setAssessmentForm((prev) => ({
-                      ...prev,
-                      muscleMassKg: parseOptionalNumber(e.target.value),
-                    }))
-                  }
-                  className={INPUT_CLASS}
-                />
-              </div>
-              <div>
-                <label className={LABEL_CLASS}>Pressão arterial</label>
-                <input
-                  type="text"
-                  value={assessmentForm.bloodPressure ?? ''}
-                  onChange={(e) =>
-                    setAssessmentForm((prev) => ({
-                      ...prev,
-                      bloodPressure: e.target.value || null,
-                    }))
-                  }
-                  placeholder="120/80"
-                  className={INPUT_CLASS}
-                />
-              </div>
-              <div>
-                <label className={LABEL_CLASS}>FC em repouso (bpm)</label>
-                <input
-                  type="number"
-                  value={assessmentForm.restingHeartRate ?? ''}
-                  onChange={(e) =>
-                    setAssessmentForm((prev) => ({
-                      ...prev,
-                      restingHeartRate: parseOptionalNumber(e.target.value),
-                    }))
-                  }
-                  className={INPUT_CLASS}
-                />
-              </div>
-            </div>
+            )}
 
-            <div className="mt-5">
-              <label className={LABEL_CLASS}>Observações do profissional responsável</label>
-              <textarea
-                rows={4}
-                value={assessmentForm.professionalNotes ?? ''}
-                onChange={(e) =>
-                  setAssessmentForm((prev) => ({
-                    ...prev,
-                    professionalNotes: e.target.value || null,
-                  }))
-                }
-                placeholder="Anote restrições de exercícios, postura, preferências de horário ou plano inicial..."
-                className={INPUT_CLASS}
-              />
-            </div>
+            {/* Anthropometric 2-Column Editorial Metric Tiles */}
+            <form onSubmit={handleSaveAssessment} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-[4px] bg-mk-alabaster/70 p-2.5 transition-all focus-within:bg-white focus-within:ring-1 focus-within:ring-mk-gold dark:bg-mk-elevated dark:focus-within:bg-mk-charcoal">
+                  <div className="mb-1 flex items-center justify-between">
+                    <label
+                      htmlFor="weightKg"
+                      className="text-[9px] font-bold uppercase tracking-[0.16em] text-mk-stone dark:text-mk-stone-dark"
+                    >
+                      Peso Atual
+                    </label>
+                    <span className="text-[10px] font-semibold text-mk-gold-text dark:text-mk-gold">
+                      KG
+                    </span>
+                  </div>
+                  <input
+                    id="weightKg"
+                    type="number"
+                    step="0.1"
+                    inputMode="decimal"
+                    value={assessmentForm.weightKg ?? ''}
+                    onChange={(e) =>
+                      setAssessmentForm((prev) => ({
+                        ...prev,
+                        weightKg: parseOptionalNumber(e.target.value),
+                      }))
+                    }
+                    placeholder="—"
+                    className="w-full bg-transparent font-serif text-lg font-semibold tracking-wide text-black focus:outline-none dark:text-mk-ivory"
+                  />
+                </div>
 
-            <div className="mt-5 flex justify-end">
-              <button
-                type="submit"
-                disabled={savingAssessment}
-                className="inline-flex items-center gap-2 rounded-[4px] bg-mk-gold px-5 py-3 text-xs font-bold uppercase tracking-[0.14em] text-black transition hover:bg-mk-gold-hover disabled:opacity-60"
-              >
-                {savingAssessment ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Save className="h-4 w-4" />
-                )}
-                Salvar Avaliação
-              </button>
-            </div>
-          </form>
+                <div className="rounded-[4px] bg-mk-alabaster/70 p-2.5 transition-all focus-within:bg-white focus-within:ring-1 focus-within:ring-mk-gold dark:bg-mk-elevated dark:focus-within:bg-mk-charcoal">
+                  <div className="mb-1 flex items-center justify-between">
+                    <label
+                      htmlFor="heightCm"
+                      className="text-[9px] font-bold uppercase tracking-[0.16em] text-mk-stone dark:text-mk-stone-dark"
+                    >
+                      Altura
+                    </label>
+                    <span className="text-[10px] font-semibold text-mk-gold-text dark:text-mk-gold">
+                      CM
+                    </span>
+                  </div>
+                  <input
+                    id="heightCm"
+                    type="number"
+                    step="0.5"
+                    inputMode="decimal"
+                    value={assessmentForm.heightCm ?? ''}
+                    onChange={(e) =>
+                      setAssessmentForm((prev) => ({
+                        ...prev,
+                        heightCm: parseOptionalNumber(e.target.value),
+                      }))
+                    }
+                    placeholder="—"
+                    className="w-full bg-transparent font-serif text-lg font-semibold tracking-wide text-black focus:outline-none dark:text-mk-ivory"
+                  />
+                </div>
+
+                <div className="rounded-[4px] bg-mk-alabaster/70 p-2.5 transition-all focus-within:bg-white focus-within:ring-1 focus-within:ring-mk-gold dark:bg-mk-elevated dark:focus-within:bg-mk-charcoal">
+                  <div className="mb-1 flex items-center justify-between">
+                    <label
+                      htmlFor="bodyFatPercentage"
+                      className="text-[9px] font-bold uppercase tracking-[0.16em] text-mk-stone dark:text-mk-stone-dark"
+                    >
+                      % Gordura
+                    </label>
+                    <span className="text-[10px] font-semibold text-mk-gold-text dark:text-mk-gold">
+                      %
+                    </span>
+                  </div>
+                  <input
+                    id="bodyFatPercentage"
+                    type="number"
+                    step="0.1"
+                    inputMode="decimal"
+                    value={assessmentForm.bodyFatPercentage ?? ''}
+                    onChange={(e) =>
+                      setAssessmentForm((prev) => ({
+                        ...prev,
+                        bodyFatPercentage: parseOptionalNumber(e.target.value),
+                      }))
+                    }
+                    placeholder="—"
+                    className="w-full bg-transparent font-serif text-lg font-semibold tracking-wide text-black focus:outline-none dark:text-mk-ivory"
+                  />
+                </div>
+
+                <div className="rounded-[4px] bg-mk-alabaster/70 p-2.5 transition-all focus-within:bg-white focus-within:ring-1 focus-within:ring-mk-gold dark:bg-mk-elevated dark:focus-within:bg-mk-charcoal">
+                  <div className="mb-1 flex items-center justify-between">
+                    <label
+                      htmlFor="muscleMassKg"
+                      className="text-[9px] font-bold uppercase tracking-[0.16em] text-mk-stone dark:text-mk-stone-dark"
+                    >
+                      Massa Musc.
+                    </label>
+                    <span className="text-[10px] font-semibold text-mk-gold-text dark:text-mk-gold">
+                      KG
+                    </span>
+                  </div>
+                  <input
+                    id="muscleMassKg"
+                    type="number"
+                    step="0.1"
+                    inputMode="decimal"
+                    value={assessmentForm.muscleMassKg ?? ''}
+                    onChange={(e) =>
+                      setAssessmentForm((prev) => ({
+                        ...prev,
+                        muscleMassKg: parseOptionalNumber(e.target.value),
+                      }))
+                    }
+                    placeholder="—"
+                    className="w-full bg-transparent font-serif text-lg font-semibold tracking-wide text-black focus:outline-none dark:text-mk-ivory"
+                  />
+                </div>
+
+                <div className="rounded-[4px] bg-mk-alabaster/70 p-2.5 transition-all focus-within:bg-white focus-within:ring-1 focus-within:ring-mk-gold dark:bg-mk-elevated dark:focus-within:bg-mk-charcoal">
+                  <div className="mb-1 flex items-center justify-between">
+                    <label
+                      htmlFor="bloodPressure"
+                      className="text-[9px] font-bold uppercase tracking-[0.16em] text-mk-stone dark:text-mk-stone-dark"
+                    >
+                      Pressão (PA)
+                    </label>
+                    <span className="text-[10px] font-semibold text-mk-gold-text dark:text-mk-gold">
+                      MMHG
+                    </span>
+                  </div>
+                  <input
+                    id="bloodPressure"
+                    type="text"
+                    value={assessmentForm.bloodPressure ?? ''}
+                    onChange={(e) =>
+                      setAssessmentForm((prev) => ({
+                        ...prev,
+                        bloodPressure: e.target.value || null,
+                      }))
+                    }
+                    placeholder="120/80"
+                    className="w-full bg-transparent font-serif text-base font-semibold tracking-wide text-black focus:outline-none dark:text-mk-ivory"
+                  />
+                </div>
+
+                <div className="rounded-[4px] bg-mk-alabaster/70 p-2.5 transition-all focus-within:bg-white focus-within:ring-1 focus-within:ring-mk-gold dark:bg-mk-elevated dark:focus-within:bg-mk-charcoal">
+                  <div className="mb-1 flex items-center justify-between">
+                    <label
+                      htmlFor="restingHeartRate"
+                      className="text-[9px] font-bold uppercase tracking-[0.16em] text-mk-stone dark:text-mk-stone-dark"
+                    >
+                      FC Repouso
+                    </label>
+                    <span className="text-[10px] font-semibold text-mk-gold-text dark:text-mk-gold">
+                      BPM
+                    </span>
+                  </div>
+                  <input
+                    id="restingHeartRate"
+                    type="number"
+                    inputMode="numeric"
+                    value={assessmentForm.restingHeartRate ?? ''}
+                    onChange={(e) =>
+                      setAssessmentForm((prev) => ({
+                        ...prev,
+                        restingHeartRate: parseOptionalNumber(e.target.value),
+                      }))
+                    }
+                    placeholder="—"
+                    className="w-full bg-transparent font-serif text-base font-semibold tracking-wide text-black focus:outline-none dark:text-mk-ivory"
+                  />
+                </div>
+              </div>
+
+              {/* Professional Notes Textarea */}
+              <div className="space-y-1.5 pt-1">
+                <div className="flex items-center justify-between gap-2">
+                  <label
+                    htmlFor="professionalNotes"
+                    className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-mk-stone dark:text-mk-stone-dark"
+                  >
+                    <ClipboardList className="h-3.5 w-3.5 text-mk-gold-text dark:text-mk-gold" />
+                    Observações do Profissional Responsável
+                  </label>
+                  <span className="font-mono text-[9px] text-mk-stone dark:text-mk-stone-dark">
+                    {notesLength}/5000
+                  </span>
+                </div>
+
+                <textarea
+                  id="professionalNotes"
+                  rows={4}
+                  maxLength={5000}
+                  value={assessmentForm.professionalNotes ?? ''}
+                  onChange={(e) =>
+                    setAssessmentForm((prev) => ({
+                      ...prev,
+                      professionalNotes: e.target.value || null,
+                    }))
+                  }
+                  placeholder="Anote restrições de exercícios, postura, preferências de horário ou plano inicial..."
+                  className="w-full resize-y rounded-[4px] bg-mk-alabaster/70 p-3 text-xs leading-relaxed text-black transition-all placeholder:text-mk-stone/60 focus:bg-white focus:outline-none focus:ring-1 focus:ring-mk-gold dark:bg-mk-elevated dark:text-mk-ivory dark:placeholder:text-mk-stone-dark/60 dark:focus:bg-mk-charcoal"
+                />
+              </div>
+
+              {/* Full-Width Gold Save CTA */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={savingAssessment}
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-[4px] bg-mk-gold text-xs font-bold uppercase tracking-[0.2em] text-black shadow-xs transition-all hover:bg-mk-gold-hover active:scale-[0.99] disabled:opacity-60"
+                >
+                  {savingAssessment ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
+                  <span>{savingAssessment ? 'Salvando...' : 'Salvar Avaliação'}</span>
+                </button>
+              </div>
+            </form>
+          </section>
         )}
 
         {/* TAB 2: HISTÓRICO MÉDICO */}
         {activeTab === 'medical' && anamnesis && (
-          <div className="space-y-5 rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal">
+          <div className="space-y-5 rounded-[4px] bg-white p-5 shadow-[0_2px_14px_rgba(0,0,0,0.04)] dark:border dark:border-white/12 dark:bg-mk-charcoal">
             <section className="space-y-2">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.22em] text-mk-gold-text dark:text-mk-gold">
                 Condições atuais
               </h3>
               <AnswerRow
@@ -630,7 +872,7 @@ export function StudentDetailPage() {
             </section>
 
             <section className="space-y-2 border-t border-mk-hairline pt-4 dark:border-white/10">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.22em] text-mk-gold-text dark:text-mk-gold">
                 Histórico de lesões
               </h3>
               <AnswerRow label="Fratura" item={anamnesis.medicalHistory.injuryHistory.fracture} />
@@ -669,7 +911,7 @@ export function StudentDetailPage() {
             </section>
 
             <section className="space-y-2 border-t border-mk-hairline pt-4 dark:border-white/10">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.22em] text-mk-gold-text dark:text-mk-gold">
                 Medicamentos e acompanhamento
               </h3>
               <BoolRow
@@ -677,7 +919,7 @@ export function StudentDetailPage() {
                 value={anamnesis.medicalHistory.medicationsAndCare.usesMedication}
               />
               {anamnesis.medicalHistory.medicationsAndCare.medicationsList && (
-                <div className="rounded-[4px] border border-amber-300 bg-[#FFFBEB] p-3 text-sm text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/35 dark:text-amber-100">
+                <div className="rounded-[4px] border border-amber-300 bg-[#FFFDF5] p-3 text-sm text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/35 dark:text-amber-100">
                   <strong>Medicamentos:</strong>{' '}
                   {anamnesis.medicalHistory.medicationsAndCare.medicationsList}
                 </div>
@@ -701,7 +943,7 @@ export function StudentDetailPage() {
             </section>
 
             <section className="space-y-2 border-t border-mk-hairline pt-4 dark:border-white/10">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.22em] text-mk-gold-text dark:text-mk-gold">
                 Histórico familiar &amp; Hábitos de vida
               </h3>
               <BoolRow
@@ -757,9 +999,9 @@ export function StudentDetailPage() {
 
         {/* TAB 3: ATIVIDADE FÍSICA & OBJETIVOS */}
         {activeTab === 'activity' && anamnesis && (
-          <div className="space-y-5 rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal">
+          <div className="space-y-5 rounded-[4px] bg-white p-5 shadow-[0_2px_14px_rgba(0,0,0,0.04)] dark:border dark:border-white/12 dark:bg-mk-charcoal">
             <section className="space-y-2.5">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.22em] text-mk-gold-text dark:text-mk-gold">
                 4. Histórico de atividade física
               </h3>
               <BoolRow
@@ -795,7 +1037,7 @@ export function StudentDetailPage() {
             </section>
 
             <section className="space-y-2.5 border-t border-mk-hairline pt-4 dark:border-white/10">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-mk-gold-text dark:text-mk-gold">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.22em] text-mk-gold-text dark:text-mk-gold">
                 5. Objetivos e expectativas
               </h3>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -846,15 +1088,15 @@ export function StudentDetailPage() {
 
         {/* TAB 4: DADOS PESSOAIS, ENDEREÇO & CONTATO DE EMERGÊNCIA */}
         {activeTab === 'personal' && studentForm && (
-          <div className="rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal">
+          <div className="rounded-[4px] bg-white p-5 shadow-[0_2px_14px_rgba(0,0,0,0.04)] dark:border dark:border-white/12 dark:bg-mk-charcoal">
             <div className="flex items-center justify-between gap-2 border-b border-mk-hairline pb-4 dark:border-white/10">
-              <h2 className="font-serif text-xl font-semibold text-black dark:text-mk-ivory">
+              <h3 className="font-serif text-lg font-semibold text-black dark:text-mk-ivory">
                 Dados Pessoais, Endereço e Emergência
-              </h2>
+              </h3>
               <button
                 type="button"
                 onClick={() => setEditingStudent((prev) => !prev)}
-                className="inline-flex items-center gap-1.5 rounded-[4px] border border-mk-hairline px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-black hover:border-black dark:border-white/15 dark:text-mk-ivory dark:hover:border-mk-gold"
+                className="inline-flex items-center gap-1.5 rounded-[4px] border border-mk-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-black hover:border-black dark:border-white/15 dark:text-mk-ivory dark:hover:border-mk-gold"
               >
                 {editingStudent ? (
                   <>
@@ -1079,12 +1321,12 @@ export function StudentDetailPage() {
 
         {/* TAB 5: TERMO, LGPD & ASSINATURA */}
         {activeTab === 'consent' && anamnesis && (
-          <div className="space-y-4 rounded-[4px] border border-mk-hairline bg-white p-5 shadow-2xs sm:p-6 dark:border-white/12 dark:bg-mk-charcoal">
+          <div className="space-y-4 rounded-[4px] bg-white p-5 shadow-[0_2px_14px_rgba(0,0,0,0.04)] dark:border dark:border-white/12 dark:bg-mk-charcoal">
             <div className="flex items-center gap-2 border-b border-mk-hairline pb-4 dark:border-white/10">
               <ShieldCheck className="h-5 w-5 text-mk-gold-text dark:text-mk-gold" />
-              <h2 className="font-serif text-xl font-semibold text-black dark:text-mk-ivory">
+              <h3 className="font-serif text-lg font-semibold text-black dark:text-mk-ivory">
                 Termo de Responsabilidade, LGPD e Assinatura
-              </h2>
+              </h3>
             </div>
 
             <div className="grid gap-3 text-sm sm:grid-cols-2">
@@ -1129,9 +1371,42 @@ export function StudentDetailPage() {
           </div>
         )}
 
-        <p className="pt-4 text-center text-[10px] font-semibold uppercase tracking-[0.22em] text-mk-stone/80 dark:text-mk-stone-dark/70">
-          MK STUDIO • Piracaia — SP
-        </p>
+        {/* Editorial Last Update Snapshot (Real Backend Timestamp) */}
+        {anamnesis && (
+          <section className="flex items-center justify-between rounded-[4px] bg-white p-4 shadow-[0_1px_6px_rgba(0,0,0,0.03)] dark:border dark:border-white/10 dark:bg-mk-charcoal">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mk-alabaster text-mk-gold-text dark:bg-mk-elevated dark:text-mk-gold">
+                <ShieldCheck className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-black dark:text-mk-ivory">
+                  Última Atualização da Ficha
+                </p>
+                <p className="text-[10px] text-mk-stone dark:text-mk-stone-dark">
+                  Sincronizada com a anamnese MK STUDIO
+                </p>
+              </div>
+            </div>
+            <span className="rounded-[3px] bg-mk-alabaster px-2 py-1 font-mono text-[10px] text-mk-stone dark:bg-mk-elevated dark:text-mk-stone-dark">
+              {formatDateTimeBR(anamnesis.updatedAt)}
+            </span>
+          </section>
+        )}
+
+        {/* Editorial Footer Note */}
+        <footer className="space-y-1.5 pb-2 pt-4 text-center">
+          <div className="flex items-center justify-center gap-2 text-mk-gold-text/60 dark:text-mk-gold/60">
+            <span className="h-px w-6 bg-mk-gold/40" />
+            <Sparkles className="h-3 w-3" />
+            <span className="h-px w-6 bg-mk-gold/40" />
+          </div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-black dark:text-mk-ivory">
+            MK STUDIO • Protocolo Privativo • Piracaia — SP
+          </p>
+          <p className="text-[9px] uppercase tracking-[0.18em] text-mk-stone dark:text-mk-stone-dark">
+            Sistema Exclusivo de Gestão e Condicionamento Individualizado
+          </p>
+        </footer>
       </main>
     </div>
   )
